@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: ${APP_NAME:back-padrao-dbsql}
+
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_TYPE:update}
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/db-sql-default}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+
+logging:
+  level:
+    org:
+      springframework:
+        security: ${SPRING_SECURITY_LOG_LEVEL:trace}
+
+  pattern:
+    console: ${LOGPATTERN_CONSOLE:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n}
+
+app:
+  security:
+    jwt-secret: ${JWT_SECRET_KEY:760bfbec9270e71dd16f09fe748cd0ad30a716870b6da7fc8b88e2909199e8947c485f7f226f7f5cd103165265a80613087a53a706cedecda6b2c3a0564afe7fc06235cf571daf38115bc6975380cfd118183c7e58ee6c831d15f22d982cb0f62bb1fba465e762bff721dd183a721d2485beebffd2b35dac3f65c36870fadc8aa2b07d442889d17c21a2cd7750611b56f9077f8a498449acf5adca891e21db1e0a474fd6fc6d6bb240808052c06af46571d91c7712271beebe827dd2f74e73d8bac891e919a97022d23ad0d7845d482b8d1c2f10db1c32fd4fd6aec093e21bae6c0dbc3194fd2f61cd80945d0e84843245e3286a9113303e64d0ba94f2155ded}
+    origins-allowed: ${ORIGINS_ALLOWED:http://localhost:4200}
+
+debug: true
