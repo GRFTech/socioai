@@ -9,6 +9,7 @@ import spring.gr.socioai.model.valueobjects.Email;
 import spring.gr.socioai.model.valueobjects.UserRole;
 import spring.gr.socioai.service.mappers.EmailMapper;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -38,7 +39,10 @@ public class AuthenticatedUserEntity implements UserDetails {
     private String password;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private AuthenticatedUserRole role;
+    private AuthenticatedUserRoleEntity role;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<CategoriaEntity> categorias = new ArrayList<>();
 
     public AuthenticatedUserEntity(Email email, String encode) {
         this.username = email;
