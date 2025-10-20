@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 @Data
 public class ReceitaDTO {
 
+    @NotNull(message = "A receita deve ter uma descrição")
+    private String descricao;
+
     /**
      * O valor da receita. Deve ser obrigatório e positivo.
      */

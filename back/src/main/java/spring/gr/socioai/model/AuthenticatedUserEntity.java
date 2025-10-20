@@ -35,7 +35,7 @@ public class AuthenticatedUserEntity implements UserDetails {
     @Column(unique = true, length = 254) // Ver RFC 5321 para entender o tamanho do email
     private Email username;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 50)
     private String password;
 
     @ManyToOne(fetch = FetchType.LAZY)

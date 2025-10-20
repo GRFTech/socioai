@@ -21,6 +21,7 @@ public class AuthenticatedUserRoleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 15, nullable = false)
     private String description;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "role")

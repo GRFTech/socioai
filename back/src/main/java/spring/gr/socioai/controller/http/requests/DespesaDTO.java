@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 @Data
 public class DespesaDTO {
 
+    @NotNull(message = "A despesa deve ter uma descrição")
+    private String descricao;
+
     @NotNull(message = "O valor da despesa é obrigatório")
     @Positive(message = "O valor deve ser positivo")
     private Double valor;

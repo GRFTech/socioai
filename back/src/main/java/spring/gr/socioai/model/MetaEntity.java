@@ -24,10 +24,13 @@ public class MetaEntity {
     @Column(length = 45, nullable = false)
     private String descricao;
 
+    @Column(nullable = false)
     private Double valorAtual;
 
+    @Column(nullable = false)
     private LocalDate dataInicio;
 
+    @Column(nullable = false)
     private LocalDate dataFim;
 
     @ManyToOne(fetch = FetchType.LAZY)

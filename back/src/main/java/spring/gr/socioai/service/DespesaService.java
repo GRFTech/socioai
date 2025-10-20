@@ -30,6 +30,7 @@ public class DespesaService {
         // Usa o construtor AllArgsConstructor (com id=null e categoria=null)
         return new DespesaEntity(
                 null,
+                dto.getDescricao(),
                 dto.getValor(),
                 dto.getDataCriacao(),
                 null // categoria (ManyToOne) - deve ser preenchida com lógica de negócio real

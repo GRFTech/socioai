@@ -29,6 +29,7 @@ public class ReceitaService {
         // Usa o construtor AllArgsConstructor (com id=null e categoria=null)
         return new ReceitaEntity(
                 null,
+                dto.getDescricao(),
                 dto.getValor(),
                 dto.getDataCriacao(),
                 null // categoria (ManyToOne) - deve ser preenchida com lógica de negócio real
