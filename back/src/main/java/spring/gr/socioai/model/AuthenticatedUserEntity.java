@@ -1,11 +1,13 @@
-package spring.gr.socioai.infra.security.model;
+package spring.gr.socioai.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import spring.gr.socioai.infra.mappers.EmailMapper;
+import spring.gr.socioai.model.valueobjects.Email;
+import spring.gr.socioai.model.valueobjects.UserRole;
+import spring.gr.socioai.service.mappers.EmailMapper;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,18 +25,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class AuthenticatedUserEntity implements UserDetails {
 
-    public AuthenticatedUserEntity(Email username, String password, UserRole role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
-
-    public AuthenticatedUserEntity(Email username, String password) {
-        this.username = username;
-        this.password = password;
-        this.role = UserRole.USER;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "BINARY(16)")
@@ -47,13 +37,17 @@ public class AuthenticatedUserEntity implements UserDetails {
     @Column(nullable = false, length = 30)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private AuthenticatedUserRole role;
+
+    public AuthenticatedUserEntity(Email email, String encode) {
+        this.username = email;
+        this.password = encode;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        if(role.getDescription().equals(UserRole.ADMIN.getRole())) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
