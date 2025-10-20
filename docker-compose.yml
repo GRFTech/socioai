@@ -1,0 +1,20 @@
+services:
+  SocioAIMySQL:
+    image: mysql:latest
+    container_name: socioai-mysql
+    ports:
+      - "3306:3306"
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: socioai
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+
+    volumes:
+      - socioai_data:/var/lib/mysql
+
+volumes:
+  socioai_data:
+    driver: local
