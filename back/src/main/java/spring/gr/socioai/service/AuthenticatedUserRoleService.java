@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.AuthenticatedUserRoleDTO;
+import spring.gr.socioai.controller.http.responses.AuthenticatedUserRoleResponse;
 import spring.gr.socioai.model.AuthenticatedUserRoleEntity;
 import spring.gr.socioai.repository.AuthenticatedUserRoleRepository;
 
@@ -24,9 +25,10 @@ public class AuthenticatedUserRoleService {
      * @return A Role salva, incluindo o ID gerado.
      */
     @Transactional
-    public AuthenticatedUserRoleEntity save(AuthenticatedUserRoleDTO roleDTO) {
-        AuthenticatedUserRoleEntity newRole = new AuthenticatedUserRoleEntity(null, roleDTO.getDescription(), null);
-        return repository.save(newRole);
+    public AuthenticatedUserRoleResponse save(AuthenticatedUserRoleDTO roleDTO) {
+        var newRole = new AuthenticatedUserRoleEntity(null, roleDTO.getDescription(), null);
+        var s = repository.save(newRole);
+        return toResponse(s);
     }
 
     /**
@@ -36,11 +38,13 @@ public class AuthenticatedUserRoleService {
      * @return Lista das Roles salvas, cada uma com seu ID gerado.
      */
     @Transactional
-    public List<AuthenticatedUserRoleEntity> saveAll(List<AuthenticatedUserRoleDTO> rolesDTO) {
+    public List<AuthenticatedUserRoleResponse> saveAll(List<AuthenticatedUserRoleDTO> rolesDTO) {
         List<AuthenticatedUserRoleEntity> roles = rolesDTO.stream()
                 .map(dto -> new AuthenticatedUserRoleEntity(null, dto.getDescription(), null))
                 .toList();
-        return repository.saveAll(roles);
+        var rs = repository.saveAll(roles);
+
+        return rs.stream().map(this::toResponse).toList();
     }
 
     /**
@@ -52,13 +56,15 @@ public class AuthenticatedUserRoleService {
      * @throws NoSuchElementException se a Role com o ID fornecido não for encontrada.
      */
     @Transactional
-    public AuthenticatedUserRoleEntity update(Long id, AuthenticatedUserRoleDTO roleDTO) {
-        AuthenticatedUserRoleEntity existingRole = repository.findById(id)
+    public AuthenticatedUserRoleResponse update(Long id, AuthenticatedUserRoleDTO roleDTO) {
+        var existingRole = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Role com ID " + id + " não encontrado para atualização."));
 
         existingRole.setDescription(roleDTO.getDescription());
 
-        return repository.save(existingRole);
+        var rs = repository.save(existingRole);
+
+        return toResponse(rs);
     }
 
     /**
@@ -67,8 +73,9 @@ public class AuthenticatedUserRoleService {
      * @return Uma lista de todas as AuthenticatedUserRoleEntity.
      */
     @Transactional
-    public List<AuthenticatedUserRoleEntity> getAll() {
-        return repository.findAll();
+    public List<AuthenticatedUserRoleResponse> getAll() {
+        var roles = repository.findAll();
+        return roles.stream().map(this::toResponse).toList();
     }
 
     /**
@@ -78,8 +85,9 @@ public class AuthenticatedUserRoleService {
      * @return Um Optional contendo a Role se encontrada, ou um Optional vazio.
      */
     @Transactional
-    public Optional<AuthenticatedUserRoleEntity> getByID(Long id) {
-        return repository.findById(id);
+    public Optional<AuthenticatedUserRoleResponse> getByID(Long id) {
+        var r = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Elemento não encontrado"));
+        return Optional.of(this.toResponse(r));
     }
 
     /**
@@ -104,5 +112,15 @@ public class AuthenticatedUserRoleService {
     @Transactional
     public void deleteAll(List<Long> ids) {
         repository.deleteAllById(ids);
+    }
+
+    /**
+     * Transforma um objeto de entidade em um pronto para serialização
+     *
+     * @param role
+     * @return AuthenticatedUserRoleResponse
+     */
+    public AuthenticatedUserRoleResponse toResponse(AuthenticatedUserRoleEntity role) {
+        return new AuthenticatedUserRoleResponse(role.getId(), role.getDescription());
     }
 }

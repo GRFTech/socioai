@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.gr.socioai.controller.http.requests.AuthenticatedUserRoleDTO;
-import spring.gr.socioai.model.AuthenticatedUserRoleEntity;
+import spring.gr.socioai.controller.http.responses.AuthenticatedUserRoleResponse;
 import spring.gr.socioai.service.AuthenticatedUserRoleService;
 
 import java.util.List;
@@ -28,8 +28,8 @@ public class AuthenticatedUserRoleController {
      * @return ResponseEntity com a Role salva e status 201 (CREATED).
      */
     @PostMapping
-    public ResponseEntity<AuthenticatedUserRoleEntity> save(@Valid @RequestBody AuthenticatedUserRoleDTO roleDTO) {
-        AuthenticatedUserRoleEntity savedRole = service.save(roleDTO);
+    public ResponseEntity<AuthenticatedUserRoleResponse> save(@Valid @RequestBody AuthenticatedUserRoleDTO roleDTO) {
+        var savedRole = service.save(roleDTO);
         return new ResponseEntity<>(savedRole, HttpStatus.CREATED);
     }
 
@@ -41,8 +41,8 @@ public class AuthenticatedUserRoleController {
      * @return ResponseEntity com a lista de Roles salvas e status 201 (CREATED).
      */
     @PostMapping("/batch")
-    public ResponseEntity<List<AuthenticatedUserRoleEntity>> saveAll(@Valid @RequestBody List<AuthenticatedUserRoleDTO> rolesDTO) {
-        List<AuthenticatedUserRoleEntity> savedRoles = service.saveAll(rolesDTO);
+    public ResponseEntity<List<AuthenticatedUserRoleResponse>> saveAll(@Valid @RequestBody List<AuthenticatedUserRoleDTO> rolesDTO) {
+        List<AuthenticatedUserRoleResponse> savedRoles = service.saveAll(rolesDTO);
         return new ResponseEntity<>(savedRoles, HttpStatus.CREATED);
     }
 
@@ -56,9 +56,9 @@ public class AuthenticatedUserRoleController {
      * ou status 404 (NOT FOUND) se o ID não existir.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<AuthenticatedUserRoleEntity> update(@PathVariable Long id, @Valid @RequestBody AuthenticatedUserRoleDTO roleDTO) {
+    public ResponseEntity<AuthenticatedUserRoleResponse> update(@PathVariable Long id, @Valid @RequestBody AuthenticatedUserRoleDTO roleDTO) {
         try {
-            AuthenticatedUserRoleEntity updatedRole = service.update(id, roleDTO);
+            var updatedRole = service.update(id, roleDTO);
             return ResponseEntity.ok(updatedRole);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
@@ -72,8 +72,8 @@ public class AuthenticatedUserRoleController {
      * @return ResponseEntity com a lista de todas as Roles e status 200 (OK).
      */
     @GetMapping
-    public ResponseEntity<List<AuthenticatedUserRoleEntity>> getAll() {
-        List<AuthenticatedUserRoleEntity> roles = service.getAll();
+    public ResponseEntity<List<AuthenticatedUserRoleResponse>> getAll() {
+        List<AuthenticatedUserRoleResponse> roles = service.getAll();
         return ResponseEntity.ok(roles);
     }
 
@@ -86,7 +86,7 @@ public class AuthenticatedUserRoleController {
      * ou status 404 (NOT FOUND) se a Role não for encontrada.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<AuthenticatedUserRoleEntity> getByID(@PathVariable Long id) {
+    public ResponseEntity<AuthenticatedUserRoleResponse> getByID(@PathVariable Long id) {
         return service.getByID(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
