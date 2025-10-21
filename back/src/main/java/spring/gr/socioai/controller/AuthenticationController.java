@@ -15,7 +15,7 @@ import spring.gr.socioai.controller.http.responses.TokenResponse;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthenticatedUserController {
+public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
