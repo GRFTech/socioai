@@ -1,6 +1,6 @@
 services:
   SocioAIMySQL:
-    image: mysql:latest
+    image: mysql:8.1.0
     container_name: socioai-mysql
     ports:
       - "3306:3306"
