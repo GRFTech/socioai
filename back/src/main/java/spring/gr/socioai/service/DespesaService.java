@@ -4,12 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.DespesaDTO;
+import spring.gr.socioai.controller.http.responses.DespesaResponse;
 import spring.gr.socioai.model.DespesaEntity;
 import spring.gr.socioai.repository.DespesaRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +27,12 @@ public class DespesaService {
      * @return A entidade Despesas pronta para ser salva.
      */
     private DespesaEntity convertToEntity(DespesaDTO dto) {
-        // Usa o construtor AllArgsConstructor (com id=null e categoria=null)
         return new DespesaEntity(
                 null,
                 dto.getDescricao(),
                 dto.getValor(),
                 dto.getDataCriacao(),
-                null // categoria (ManyToOne) - deve ser preenchida com lógica de negócio real
+                null
         );
     }
 
@@ -44,9 +43,9 @@ public class DespesaService {
      * @return A Despesa salva, incluindo o ID gerado.
      */
     @Transactional
-    public DespesaEntity save(DespesaDTO despesasDTO) {
+    public DespesaResponse save(DespesaDTO despesasDTO) {
         DespesaEntity novaDespesa = convertToEntity(despesasDTO);
-        return repository.save(novaDespesa);
+        return toResponse(repository.save(novaDespesa));
     }
 
     /**
@@ -56,11 +55,11 @@ public class DespesaService {
      * @return Lista das Despesas salvas, cada uma com seu ID gerado.
      */
     @Transactional
-    public List<DespesaEntity> saveAll(List<DespesaDTO> despesasDTO) {
+    public List<DespesaResponse> saveAll(List<DespesaDTO> despesasDTO) {
         List<DespesaEntity> despesas = despesasDTO.stream()
                 .map(this::convertToEntity)
                 .toList();
-        return repository.saveAll(despesas);
+        return repository.saveAll(despesas).stream().map(this::toResponse).toList();
     }
 
     /**
@@ -72,14 +71,14 @@ public class DespesaService {
      * @throws NoSuchElementException se a Despesa com o ID fornecido não for encontrada.
      */
     @Transactional
-    public DespesaEntity update(Long id, DespesaDTO despesasDTO) {
+    public DespesaResponse update(Long id, DespesaDTO despesasDTO) {
         DespesaEntity existingDespesa = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Despesa com ID " + id + " não encontrada para atualização."));
 
         existingDespesa.setValor(despesasDTO.getValor());
         existingDespesa.setDataCriacao(despesasDTO.getDataCriacao());
 
-        return repository.save(existingDespesa);
+        return toResponse(repository.save(existingDespesa));
     }
 
     /**
@@ -88,8 +87,8 @@ public class DespesaService {
      * @return Uma lista de todas as Despesas.
      */
     @Transactional
-    public List<DespesaEntity> getAll() {
-        return repository.findAll();
+    public List<DespesaResponse> getAll() {
+        return repository.findAll().stream().map(this::toResponse).toList();
     }
 
     /**
@@ -99,8 +98,11 @@ public class DespesaService {
      * @return Um Optional contendo a Despesa se encontrada, ou um Optional vazio.
      */
     @Transactional
-    public Optional<DespesaEntity> getByID(Long id) {
-        return repository.findById(id);
+    public DespesaResponse getByID(Long id) {
+
+        var d = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Despesa não encontrada!"));
+
+        return toResponse(d);
     }
 
     /**
@@ -125,5 +127,9 @@ public class DespesaService {
     @Transactional
     public void deleteAll(List<Long> ids) {
         repository.deleteAllById(ids);
+    }
+
+    private DespesaResponse toResponse(DespesaEntity despesaEntity) {
+        return new DespesaResponse(despesaEntity.getId(), despesaEntity.getDescricao(), despesaEntity.getValor(), despesaEntity.getDataCriacao(), despesaEntity.getCategoria().getId());
     }
 }

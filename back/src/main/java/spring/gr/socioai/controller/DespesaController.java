@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.gr.socioai.controller.http.requests.DespesaDTO;
-import spring.gr.socioai.model.DespesaEntity;
+import spring.gr.socioai.controller.http.responses.DespesaResponse;
 import spring.gr.socioai.service.DespesaService;
 
 import java.util.List;
@@ -28,8 +28,8 @@ public class DespesaController {
      * @return ResponseEntity com a Despesa salva e status 201 (CREATED).
      */
     @PostMapping
-    public ResponseEntity<DespesaEntity> save(@Valid @RequestBody DespesaDTO despesasDTO) {
-        DespesaEntity savedDespesa = service.save(despesasDTO);
+    public ResponseEntity<DespesaResponse> save(@Valid @RequestBody DespesaDTO despesasDTO) {
+        var savedDespesa = service.save(despesasDTO);
         return new ResponseEntity<>(savedDespesa, HttpStatus.CREATED);
     }
 
@@ -41,8 +41,8 @@ public class DespesaController {
      * @return ResponseEntity com a lista de Despesas salvas e status 201 (CREATED).
      */
     @PostMapping("/batch")
-    public ResponseEntity<List<DespesaEntity>> saveAll(@Valid @RequestBody List<DespesaDTO> despesasDTO) {
-        List<DespesaEntity> savedDespesas = service.saveAll(despesasDTO);
+    public ResponseEntity<List<DespesaResponse>> saveAll(@Valid @RequestBody List<DespesaDTO> despesasDTO) {
+        var savedDespesas = service.saveAll(despesasDTO);
         return new ResponseEntity<>(savedDespesas, HttpStatus.CREATED);
     }
 
@@ -56,9 +56,9 @@ public class DespesaController {
      * ou status 404 (NOT FOUND) se o ID não existir.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<DespesaEntity> update(@PathVariable Long id, @Valid @RequestBody DespesaDTO despesasDTO) {
+    public ResponseEntity<DespesaResponse> update(@PathVariable Long id, @Valid @RequestBody DespesaDTO despesasDTO) {
         try {
-            DespesaEntity updatedDespesa = service.update(id, despesasDTO);
+            var updatedDespesa = service.update(id, despesasDTO);
             return ResponseEntity.ok(updatedDespesa);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
@@ -72,8 +72,8 @@ public class DespesaController {
      * @return ResponseEntity com a lista de todas as Despesas e status 200 (OK).
      */
     @GetMapping
-    public ResponseEntity<List<DespesaEntity>> getAll() {
-        List<DespesaEntity> despesas = service.getAll();
+    public ResponseEntity<List<DespesaResponse>> getAll() {
+        var despesas = service.getAll();
         return ResponseEntity.ok(despesas);
     }
 
@@ -86,10 +86,8 @@ public class DespesaController {
      * ou status 404 (NOT FOUND) se a Despesa não for encontrada.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<DespesaEntity> getByID(@PathVariable Long id) {
-        return service.getByID(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<DespesaResponse> getByID(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getByID(id));
     }
 
     /**
