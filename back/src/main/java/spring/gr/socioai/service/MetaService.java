@@ -4,12 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.MetaDTO;
+import spring.gr.socioai.controller.http.responses.MetaResponse;
 import spring.gr.socioai.model.MetaEntity;
 import spring.gr.socioai.repository.MetaRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,14 +26,13 @@ public class MetaService {
      * @return A entidade Metas pronta para ser salva.
      */
     private MetaEntity convertToEntity(MetaDTO dto) {
-        // Usa o construtor AllArgsConstructor (com id=null e categoria=null)
         return new MetaEntity(
                 null,
                 dto.getDescricao(),
                 dto.getValorAtual(),
                 dto.getDataInicio(),
                 dto.getDataFim(),
-                null // categoria (ManyToOne) - deve ser preenchida com lógica de negócio real
+                null
         );
     }
 
@@ -44,9 +43,9 @@ public class MetaService {
      * @return A Meta salva, incluindo o ID gerado.
      */
     @Transactional
-    public MetaEntity save(MetaDTO metasDTO) {
+    public MetaResponse save(MetaDTO metasDTO) {
         MetaEntity novaMeta = convertToEntity(metasDTO);
-        return repository.save(novaMeta);
+        return toResponse(repository.save(novaMeta));
     }
 
     /**
@@ -56,11 +55,11 @@ public class MetaService {
      * @return Lista das Metas salvas, cada uma com seu ID gerado.
      */
     @Transactional
-    public List<MetaEntity> saveAll(List<MetaDTO> metasDTO) {
+    public List<MetaResponse> saveAll(List<MetaDTO> metasDTO) {
         List<MetaEntity> metas = metasDTO.stream()
                 .map(this::convertToEntity)
                 .toList();
-        return repository.saveAll(metas);
+        return repository.saveAll(metas).stream().map(this::toResponse).toList();
     }
 
     /**
@@ -72,7 +71,7 @@ public class MetaService {
      * @throws NoSuchElementException se a Meta com o ID fornecido não for encontrada.
      */
     @Transactional
-    public MetaEntity update(Long id, MetaDTO metasDTO) {
+    public MetaResponse update(Long id, MetaDTO metasDTO) {
         MetaEntity existingMeta = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Meta com ID " + id + " não encontrada para atualização."));
 
@@ -81,7 +80,7 @@ public class MetaService {
         existingMeta.setDataInicio(metasDTO.getDataInicio());
         existingMeta.setDataFim(metasDTO.getDataFim());
 
-        return repository.save(existingMeta);
+        return toResponse(repository.save(existingMeta));
     }
 
     /**
@@ -90,8 +89,8 @@ public class MetaService {
      * @return Uma lista de todas as Metas.
      */
     @Transactional
-    public List<MetaEntity> getAll() {
-        return repository.findAll();
+    public List<MetaResponse> getAll() {
+        return repository.findAll().stream().map(this::toResponse).toList();
     }
 
     /**
@@ -101,8 +100,11 @@ public class MetaService {
      * @return Um Optional contendo a Meta se encontrada, ou um Optional vazio.
      */
     @Transactional
-    public Optional<MetaEntity> getByID(Long id) {
-        return repository.findById(id);
+    public MetaResponse getByID(Long id) {
+
+        var m = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Meta não encontrada para id: " + id));
+
+        return toResponse(m);
     }
 
     /**
@@ -127,5 +129,9 @@ public class MetaService {
     @Transactional
     public void deleteAll(List<Long> ids) {
         repository.deleteAllById(ids);
+    }
+
+    private MetaResponse toResponse(MetaEntity metaEntity) {
+        return new MetaResponse(metaEntity.getId(), metaEntity.getDescricao(), metaEntity.getValorAtual(), metaEntity.getDataInicio(), metaEntity.getDataFim(), metaEntity.getCategoria().getId());
     }
 }

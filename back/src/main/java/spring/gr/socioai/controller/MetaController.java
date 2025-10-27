@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.gr.socioai.controller.http.requests.MetaDTO;
-import spring.gr.socioai.model.MetaEntity;
+import spring.gr.socioai.controller.http.responses.MetaResponse;
 import spring.gr.socioai.service.MetaService;
 
 import java.util.List;
@@ -36,8 +36,8 @@ public class MetaController {
      * @return ResponseEntity com a Meta salva e status 201 (CREATED).
      */
     @PostMapping
-    public ResponseEntity<MetaEntity> save(@Valid @RequestBody MetaDTO metasDTO) {
-        MetaEntity savedMeta = service.save(metasDTO);
+    public ResponseEntity<MetaResponse> save(@Valid @RequestBody MetaDTO metasDTO) {
+        var savedMeta = service.save(metasDTO);
         return new ResponseEntity<>(savedMeta, HttpStatus.CREATED);
     }
 
@@ -49,8 +49,8 @@ public class MetaController {
      * @return ResponseEntity com a lista de Metas salvas e status 201 (CREATED).
      */
     @PostMapping("/batch")
-    public ResponseEntity<List<MetaEntity>> saveAll(@Valid @RequestBody List<MetaDTO> metasDTO) {
-        List<MetaEntity> savedMetas = service.saveAll(metasDTO);
+    public ResponseEntity<List<MetaResponse>> saveAll(@Valid @RequestBody List<MetaDTO> metasDTO) {
+        var savedMetas = service.saveAll(metasDTO);
         return new ResponseEntity<>(savedMetas, HttpStatus.CREATED);
     }
 
@@ -64,9 +64,9 @@ public class MetaController {
      * ou status 404 (NOT FOUND) se o ID não existir.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<MetaEntity> update(@PathVariable Long id, @Valid @RequestBody MetaDTO metasDTO) {
+    public ResponseEntity<MetaResponse> update(@PathVariable Long id, @Valid @RequestBody MetaDTO metasDTO) {
         try {
-            MetaEntity updatedMeta = service.update(id, metasDTO);
+            var updatedMeta = service.update(id, metasDTO);
             return ResponseEntity.ok(updatedMeta);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
@@ -80,8 +80,8 @@ public class MetaController {
      * @return ResponseEntity com a lista de todas as Metas e status 200 (OK).
      */
     @GetMapping
-    public ResponseEntity<List<MetaEntity>> getAll() {
-        List<MetaEntity> metas = service.getAll();
+    public ResponseEntity<List<MetaResponse>> getAll() {
+        var metas = service.getAll();
         return ResponseEntity.ok(metas);
     }
 
@@ -94,10 +94,8 @@ public class MetaController {
      * ou status 404 (NOT FOUND) se a Meta não for encontrada.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MetaEntity> getByID(@PathVariable Long id) {
-        return service.getByID(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<MetaResponse> getByID(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getByID(id));
     }
 
     /**
