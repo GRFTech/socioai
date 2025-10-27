@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.CategoriaDTO;
+import spring.gr.socioai.controller.http.responses.CategoriaResponse;
 import spring.gr.socioai.model.CategoriaEntity;
 import spring.gr.socioai.repository.CategoriaRepository;
 
@@ -28,15 +29,14 @@ public class CategoriaService {
      * @return A entidade Categoria pronta para ser salva.
      */
     private CategoriaEntity convertToEntity(CategoriaDTO dto) {
-        // Usa o construtor AllArgsConstructor (com id=null, user=null e listas vazias)
         return new CategoriaEntity(
                 null,
                 dto.getNome(),
                 dto.getTipo(),
-                null, // user (ManyToOne) - deve ser preenchido com lógica de autenticação real
-                null, // metas (OneToMany)
-                null, // despesas (OneToMany)
-                null  // receitas (OneToMany)
+                null,
+                null,
+                null,
+                null
         );
     }
 
@@ -47,9 +47,9 @@ public class CategoriaService {
      * @return A Categoria salva, incluindo o ID gerado.
      */
     @Transactional
-    public CategoriaEntity save(CategoriaDTO categoriaDTO) {
+    public CategoriaResponse save(CategoriaDTO categoriaDTO) {
         CategoriaEntity novaCategoria = convertToEntity(categoriaDTO);
-        return repository.save(novaCategoria);
+        return toResponse(repository.save(novaCategoria));
     }
 
     /**
@@ -59,11 +59,11 @@ public class CategoriaService {
      * @return Lista das Categorias salvas, cada uma com seu ID gerado.
      */
     @Transactional
-    public List<CategoriaEntity> saveAll(List<CategoriaDTO> categoriasDTO) {
+    public List<CategoriaResponse> saveAll(List<CategoriaDTO> categoriasDTO) {
         List<CategoriaEntity> categorias = categoriasDTO.stream()
                 .map(this::convertToEntity)
                 .toList();
-        return repository.saveAll(categorias);
+        return repository.saveAll(categorias).stream().map(this::toResponse).toList();
     }
 
     /**
@@ -75,14 +75,14 @@ public class CategoriaService {
      * @throws NoSuchElementException se a Categoria com o ID fornecido não for encontrada.
      */
     @Transactional
-    public CategoriaEntity update(Long id, CategoriaDTO categoriaDTO) {
+    public CategoriaResponse update(Long id, CategoriaDTO categoriaDTO) {
         CategoriaEntity existingCategoria = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Categoria com ID " + id + " não encontrada para atualização."));
 
         existingCategoria.setNome(categoriaDTO.getNome());
         existingCategoria.setTipo(categoriaDTO.getTipo());
 
-        return repository.save(existingCategoria);
+        return toResponse(repository.save(existingCategoria));
     }
 
     /**
@@ -91,8 +91,8 @@ public class CategoriaService {
      * @return Uma lista de todas as Categoria.
      */
     @Transactional
-    public List<CategoriaEntity> getAll() {
-        return repository.findAll();
+    public List<CategoriaResponse> getAll() {
+        return repository.findAll().stream().map(this::toResponse).toList();
     }
 
     /**
@@ -102,8 +102,11 @@ public class CategoriaService {
      * @return Um Optional contendo a Categoria se encontrada, ou um Optional vazio.
      */
     @Transactional
-    public Optional<CategoriaEntity> getByID(Long id) {
-        return repository.findById(id);
+    public CategoriaResponse getByID(Long id) {
+
+        var c = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Categoria não encontrada!"));
+
+        return toResponse(c);
     }
 
     /**
@@ -128,5 +131,10 @@ public class CategoriaService {
     @Transactional
     public void deleteAll(List<Long> ids) {
         repository.deleteAllById(ids);
+    }
+
+
+    private CategoriaResponse toResponse(CategoriaEntity entity) {
+        return new CategoriaResponse(entity.getId() ,entity.getNome(), entity.getTipo(), entity.getUser().getUsername());
     }
 }

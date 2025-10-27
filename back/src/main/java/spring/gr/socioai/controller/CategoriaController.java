@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.gr.socioai.controller.http.requests.CategoriaDTO;
+import spring.gr.socioai.controller.http.responses.CategoriaResponse;
 import spring.gr.socioai.model.CategoriaEntity;
 import spring.gr.socioai.service.CategoriaService;
 
@@ -27,8 +28,8 @@ public class CategoriaController {
      * @return ResponseEntity com a Categoria salva e status 201 (CREATED).
      */
     @PostMapping
-    public ResponseEntity<CategoriaEntity> save(@Valid @RequestBody CategoriaDTO categoriaDTO) {
-        CategoriaEntity savedCategoria = service.save(categoriaDTO);
+    public ResponseEntity<CategoriaResponse> save(@Valid @RequestBody CategoriaDTO categoriaDTO) {
+        var savedCategoria = service.save(categoriaDTO);
         return new ResponseEntity<>(savedCategoria, HttpStatus.CREATED);
     }
 
@@ -40,8 +41,8 @@ public class CategoriaController {
      * @return ResponseEntity com a lista de Categorias salvas e status 201 (CREATED).
      */
     @PostMapping("/batch")
-    public ResponseEntity<List<CategoriaEntity>> saveAll(@Valid @RequestBody List<CategoriaDTO> categoriasDTO) {
-        List<CategoriaEntity> savedCategorias = service.saveAll(categoriasDTO);
+    public ResponseEntity<List<CategoriaResponse>> saveAll(@Valid @RequestBody List<CategoriaDTO> categoriasDTO) {
+        var savedCategorias = service.saveAll(categoriasDTO);
         return new ResponseEntity<>(savedCategorias, HttpStatus.CREATED);
     }
 
@@ -55,9 +56,9 @@ public class CategoriaController {
      * ou status 404 (NOT FOUND) se o ID não existir.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaEntity> update(@PathVariable Long id, @Valid @RequestBody CategoriaDTO categoriaDTO) {
+    public ResponseEntity<CategoriaResponse> update(@PathVariable Long id, @Valid @RequestBody CategoriaDTO categoriaDTO) {
         try {
-            CategoriaEntity updatedCategoria = service.update(id, categoriaDTO);
+            var updatedCategoria = service.update(id, categoriaDTO);
             return ResponseEntity.ok(updatedCategoria);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
@@ -71,8 +72,8 @@ public class CategoriaController {
      * @return ResponseEntity com a lista de todas as Categorias e status 200 (OK).
      */
     @GetMapping
-    public ResponseEntity<List<CategoriaEntity>> getAll() {
-        List<CategoriaEntity> categorias = service.getAll();
+    public ResponseEntity<List<CategoriaResponse>> getAll() {
+        var categorias = service.getAll();
         return ResponseEntity.ok(categorias);
     }
 
@@ -85,10 +86,8 @@ public class CategoriaController {
      * ou status 404 (NOT FOUND) se a Categoria não for encontrada.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaEntity> getByID(@PathVariable Long id) {
-        return service.getByID(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<CategoriaResponse> getByID(@PathVariable Long id) {
+        return ResponseEntity.ok(this.service.getByID(id));
     }
 
     /**
