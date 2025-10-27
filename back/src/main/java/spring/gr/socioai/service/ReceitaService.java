@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import spring.gr.socioai.controller.http.requests.ReceitaDTO;
+import spring.gr.socioai.controller.http.responses.ReceitaResponse;
 import spring.gr.socioai.model.ReceitaEntity;
 import spring.gr.socioai.repository.ReceitaRepository;
 
@@ -26,13 +27,12 @@ public class ReceitaService {
      * @return A entidade Receitas pronta para ser salva.
      */
     private ReceitaEntity convertToEntity(ReceitaDTO dto) {
-        // Usa o construtor AllArgsConstructor (com id=null e categoria=null)
         return new ReceitaEntity(
                 null,
                 dto.getDescricao(),
                 dto.getValor(),
                 dto.getDataCriacao(),
-                null // categoria (ManyToOne) - deve ser preenchida com lógica de negócio real
+                null
         );
     }
 
@@ -43,9 +43,9 @@ public class ReceitaService {
      * @return A Receita salva, incluindo o ID gerado.
      */
     @Transactional
-    public ReceitaEntity save(ReceitaDTO receitasDTO) {
+    public ReceitaResponse save(ReceitaDTO receitasDTO) {
         ReceitaEntity novaReceita = convertToEntity(receitasDTO);
-        return repository.save(novaReceita);
+        return toResponse(repository.save(novaReceita));
     }
 
     /**
@@ -55,11 +55,11 @@ public class ReceitaService {
      * @return Lista das Receitas salvas, cada uma com seu ID gerado.
      */
     @Transactional
-    public List<ReceitaEntity> saveAll(List<ReceitaDTO> receitasDTO) {
+    public List<ReceitaResponse> saveAll(List<ReceitaDTO> receitasDTO) {
         List<ReceitaEntity> receitas = receitasDTO.stream()
                 .map(this::convertToEntity)
                 .toList();
-        return repository.saveAll(receitas);
+        return repository.saveAll(receitas).stream().map(this::toResponse).toList();
     }
 
     /**
@@ -71,14 +71,14 @@ public class ReceitaService {
      * @throws NoSuchElementException se a Receita com o ID fornecido não for encontrada.
      */
     @Transactional
-    public ReceitaEntity update(Long id, ReceitaDTO receitasDTO) {
+    public ReceitaResponse update(Long id, ReceitaDTO receitasDTO) {
         ReceitaEntity existingReceita = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Receita com ID " + id + " não encontrada para atualização."));
 
         existingReceita.setValor(receitasDTO.getValor());
         existingReceita.setDataCriacao(receitasDTO.getDataCriacao());
 
-        return repository.save(existingReceita);
+        return toResponse(repository.save(existingReceita));
     }
 
     /**
@@ -87,8 +87,8 @@ public class ReceitaService {
      * @return Uma lista de todas as Receitas.
      */
     @Transactional
-    public List<ReceitaEntity> getAll() {
-        return repository.findAll();
+    public List<ReceitaResponse> getAll() {
+        return repository.findAll().stream().map(this::toResponse).toList();
     }
 
     /**
@@ -98,8 +98,11 @@ public class ReceitaService {
      * @return Um Optional contendo a Receita se encontrada, ou um Optional vazio.
      */
     @Transactional
-    public Optional<ReceitaEntity> getByID(Long id) {
-        return repository.findById(id);
+    public ReceitaResponse getByID(Long id) {
+
+        var r = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Receita não encontrada com id: " + id));
+
+        return toResponse(r);
     }
 
     /**
@@ -124,5 +127,9 @@ public class ReceitaService {
     @Transactional
     public void deleteAll(List<Long> ids) {
         repository.deleteAllById(ids);
+    }
+
+    private ReceitaResponse toResponse(ReceitaEntity entity) {
+        return new ReceitaResponse(entity.getId(), entity.getDescricao(), entity.getValor(), entity.getDataCriacao(), entity.getCategoria().getId());
     }
 }

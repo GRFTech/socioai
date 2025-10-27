@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.gr.socioai.controller.http.requests.ReceitaDTO;
-import spring.gr.socioai.model.ReceitaEntity;
+import spring.gr.socioai.controller.http.responses.ReceitaResponse;
 import spring.gr.socioai.service.ReceitaService;
 
 import java.util.List;
@@ -27,8 +27,8 @@ public class ReceitaController {
      * @return ResponseEntity com a Receita salva e status 201 (CREATED).
      */
     @PostMapping
-    public ResponseEntity<ReceitaEntity> save(@Valid @RequestBody ReceitaDTO receitasDTO) {
-        ReceitaEntity savedReceita = service.save(receitasDTO);
+    public ResponseEntity<ReceitaResponse> save(@Valid @RequestBody ReceitaDTO receitasDTO) {
+        var savedReceita = service.save(receitasDTO);
         return new ResponseEntity<>(savedReceita, HttpStatus.CREATED);
     }
 
@@ -40,8 +40,8 @@ public class ReceitaController {
      * @return ResponseEntity com a lista de Receitas salvas e status 201 (CREATED).
      */
     @PostMapping("/batch")
-    public ResponseEntity<List<ReceitaEntity>> saveAll(@Valid @RequestBody List<ReceitaDTO> receitasDTO) {
-        List<ReceitaEntity> savedReceitas = service.saveAll(receitasDTO);
+    public ResponseEntity<List<ReceitaResponse>> saveAll(@Valid @RequestBody List<ReceitaDTO> receitasDTO) {
+        var savedReceitas = service.saveAll(receitasDTO);
         return new ResponseEntity<>(savedReceitas, HttpStatus.CREATED);
     }
 
@@ -55,9 +55,9 @@ public class ReceitaController {
      * ou status 404 (NOT FOUND) se o ID não existir.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ReceitaEntity> update(@PathVariable Long id, @Valid @RequestBody ReceitaDTO receitasDTO) {
+    public ResponseEntity<ReceitaResponse> update(@PathVariable Long id, @Valid @RequestBody ReceitaDTO receitasDTO) {
         try {
-            ReceitaEntity updatedReceita = service.update(id, receitasDTO);
+            var updatedReceita = service.update(id, receitasDTO);
             return ResponseEntity.ok(updatedReceita);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
@@ -71,8 +71,8 @@ public class ReceitaController {
      * @return ResponseEntity com a lista de todas as Receitas e status 200 (OK).
      */
     @GetMapping
-    public ResponseEntity<List<ReceitaEntity>> getAll() {
-        List<ReceitaEntity> receitas = service.getAll();
+    public ResponseEntity<List<ReceitaResponse>> getAll() {
+        var receitas = service.getAll();
         return ResponseEntity.ok(receitas);
     }
 
@@ -85,10 +85,8 @@ public class ReceitaController {
      * ou status 404 (NOT FOUND) se a Receita não for encontrada.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ReceitaEntity> getByID(@PathVariable Long id) {
-        return service.getByID(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ReceitaResponse> getByID(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getByID(id));
     }
 
     /**
