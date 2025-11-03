@@ -35,13 +35,13 @@ public class AuthenticatedUserEntity implements UserDetails {
     @Column(unique = true, length = 254) // Ver RFC 5321 para entender o tamanho do email
     private Email username;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private AuthenticatedUserRoleEntity role;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private List<CategoriaEntity> categorias = new ArrayList<>();
 
     public AuthenticatedUserEntity(Email email, String encode) {

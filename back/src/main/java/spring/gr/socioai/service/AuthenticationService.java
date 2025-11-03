@@ -12,6 +12,7 @@ import spring.gr.socioai.model.valueobjects.Email;
 import spring.gr.socioai.repository.AuthenticatedUserRepository;
 import spring.gr.socioai.controller.http.requests.LoginRequest;
 import spring.gr.socioai.controller.http.requests.RegisterRequest;
+import spring.gr.socioai.repository.AuthenticatedUserRoleRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +23,10 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final CompromisedPasswordChecker compromisedPasswordChecker;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticatedUserRoleRepository roleRepository;
 
     public String login(LoginRequest request) {
-        var user = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+        var user = new UsernamePasswordAuthenticationToken(new Email(request.email()), request.password());
         var authentication = authenticationManager.authenticate(user);
 
         var authUser = (AuthenticatedUserEntity) authentication.getPrincipal();
@@ -39,8 +41,12 @@ public class AuthenticationService {
         }
 
         var user = new AuthenticatedUserEntity(
-                req.email(),
-                passwordEncoder.encode(req.password()));
+                null,
+                new Email(req.email()),
+                passwordEncoder.encode(req.password()),
+                roleRepository.getReferenceById(1L), // salva como user básico
+                null
+        );
 
         this.authenticatedUserRepository.save(user);
         return jwtService.createToken(new Email(user.getUsername()));
