@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.UUID;
+
 /**
  * DTO (Data Transfer Object) usado para receber dados de criação e atualização
  * da entidade Categoria, contendo o nome e o tipo da categoria.
@@ -24,4 +26,5 @@ public class CategoriaDTO {
     @NotBlank(message = "O tipo da categoria é obrigatório")
     @Size(max = 10, message = "O tipo deve ter no máximo 10 caracteres")
     private String tipo;
+
 }

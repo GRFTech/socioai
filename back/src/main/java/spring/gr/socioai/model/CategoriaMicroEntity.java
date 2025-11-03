@@ -1,34 +1,35 @@
 package spring.gr.socioai.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity
-@Table(name = "RECEITAS_TB")
+@Table
+@Entity(name = "CATEGORIA_MICRO_TB")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReceitaEntity {
+public class CategoriaMicroEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String descricao;
-
-    @Column(nullable = false)
-    private Double valor;
-
-    @Column(nullable = false)
-    private LocalDateTime dataCriacao;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meta_id")
+    private MetaEntity meta;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id")
     private CategoriaEntity categoria;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<LancamentoEntity> lancamentos;
+
 }

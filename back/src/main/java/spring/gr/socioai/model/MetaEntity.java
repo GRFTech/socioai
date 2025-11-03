@@ -33,6 +33,6 @@ public class MetaEntity {
     @Column(nullable = false)
     private LocalDate dataFim;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private CategoriaEntity categoria;
+    @OneToOne(mappedBy = "meta")
+    private CategoriaMicroEntity categoria;
 }

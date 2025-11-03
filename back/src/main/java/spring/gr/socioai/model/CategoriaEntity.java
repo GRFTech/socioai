@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,11 +30,5 @@ public class CategoriaEntity {
     private AuthenticatedUserEntity user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
-    private List<MetaEntity> metas = new ArrayList<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
-    private List<DespesaEntity> despesas = new ArrayList<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
-    private List<ReceitaEntity> receitas = new ArrayList<>();
+    private List<CategoriaMicroEntity> categorias;
 }

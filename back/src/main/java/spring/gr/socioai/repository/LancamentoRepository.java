@@ -2,8 +2,8 @@ package spring.gr.socioai.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import spring.gr.socioai.model.ReceitaEntity;
+import spring.gr.socioai.model.LancamentoEntity;
 
 @Repository
-public interface ReceitaRepository extends JpaRepository<ReceitaEntity,Long> {
+public interface LancamentoRepository extends JpaRepository<LancamentoEntity,Long> {
 }

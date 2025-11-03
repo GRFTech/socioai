@@ -3,60 +3,62 @@ package spring.gr.socioai.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import spring.gr.socioai.controller.http.requests.ReceitaDTO;
-import spring.gr.socioai.controller.http.responses.ReceitaResponse;
-import spring.gr.socioai.model.ReceitaEntity;
-import spring.gr.socioai.repository.ReceitaRepository;
+import spring.gr.socioai.controller.http.requests.LancamentoDTO;
+import spring.gr.socioai.controller.http.responses.LancamentoResponse;
+import spring.gr.socioai.model.LancamentoEntity;
+import spring.gr.socioai.model.valueobjects.TipoLancamento;
+import spring.gr.socioai.repository.CategoriaMicroRepository;
+import spring.gr.socioai.repository.LancamentoRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ReceitaService {
+public class LancamentoService {
 
-    private final ReceitaRepository repository;
+    private final LancamentoRepository repository;
+    private final CategoriaMicroRepository categoriaMicroRepository;
 
     /**
-     * Converte um ReceitasDTO em uma entidade Receitas para persistência.
+     * Converte um LancamentoDTO em uma entidade Lancamento para persistência.
      * Nota: O relacionamento {@code categoria} é inicializado como nulo neste CRUD básico.
-     * Em uma aplicação real, a categoria deve ser buscada e setada aqui.
      *
-     * @param dto O DTO contendo valor e data de criação da receita.
-     * @return A entidade Receitas pronta para ser salva.
+     * @param dto O DTO contendo valor e data de criação do Lancamento.
+     * @return A entidade Lancamento pronta para ser salva.
      */
-    private ReceitaEntity convertToEntity(ReceitaDTO dto) {
-        return new ReceitaEntity(
+    private LancamentoEntity convertToEntity(LancamentoDTO dto) {
+        return new LancamentoEntity(
                 null,
                 dto.getDescricao(),
                 dto.getValor(),
+                TipoLancamento.valueOf(dto.getTipoLancamento()),
                 dto.getDataCriacao(),
-                null
+                categoriaMicroRepository.getReferenceById(dto.getMicroCategoriaId())
         );
     }
 
     /**
      * Salva uma nova Receita no banco de dados.
      *
-     * @param receitasDTO DTO contendo os dados da receita a ser salva.
+     * @param lancamentoDTO DTO contendo os dados da receita a ser salva.
      * @return A Receita salva, incluindo o ID gerado.
      */
     @Transactional
-    public ReceitaResponse save(ReceitaDTO receitasDTO) {
-        ReceitaEntity novaReceita = convertToEntity(receitasDTO);
-        return toResponse(repository.save(novaReceita));
+    public LancamentoResponse save(LancamentoDTO lancamentoDTO) {
+        LancamentoEntity novoLancamento = convertToEntity(lancamentoDTO);
+        return toResponse(repository.save(novoLancamento));
     }
 
     /**
      * Salva uma lista de novas Receitas no banco de dados.
      *
-     * @param receitasDTO Lista de DTOs contendo os dados das Receitas a serem salvas.
+     * @param lancamentoDTO Lista de DTOs contendo os dados das Receitas a serem salvas.
      * @return Lista das Receitas salvas, cada uma com seu ID gerado.
      */
     @Transactional
-    public List<ReceitaResponse> saveAll(List<ReceitaDTO> receitasDTO) {
-        List<ReceitaEntity> receitas = receitasDTO.stream()
+    public List<LancamentoResponse> saveAll(List<LancamentoDTO> lancamentoDTO) {
+        List<LancamentoEntity> receitas = lancamentoDTO.stream()
                 .map(this::convertToEntity)
                 .toList();
         return repository.saveAll(receitas).stream().map(this::toResponse).toList();
@@ -66,17 +68,17 @@ public class ReceitaService {
      * Atualiza uma Receita existente com base no ID.
      *
      * @param id O ID da Receita a ser atualizada.
-     * @param receitasDTO DTO com os novos dados (valor, dataCriacao).
+     * @param lancamentoDTO DTO com os novos dados (valor, dataCriacao).
      * @return A Receita atualizada.
      * @throws NoSuchElementException se a Receita com o ID fornecido não for encontrada.
      */
     @Transactional
-    public ReceitaResponse update(Long id, ReceitaDTO receitasDTO) {
-        ReceitaEntity existingReceita = repository.findById(id)
+    public LancamentoResponse update(Long id, LancamentoDTO lancamentoDTO) {
+        LancamentoEntity existingReceita = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Receita com ID " + id + " não encontrada para atualização."));
 
-        existingReceita.setValor(receitasDTO.getValor());
-        existingReceita.setDataCriacao(receitasDTO.getDataCriacao());
+        existingReceita.setValor(lancamentoDTO.getValor());
+        existingReceita.setDataCriacao(lancamentoDTO.getDataCriacao());
 
         return toResponse(repository.save(existingReceita));
     }
@@ -87,7 +89,7 @@ public class ReceitaService {
      * @return Uma lista de todas as Receitas.
      */
     @Transactional
-    public List<ReceitaResponse> getAll() {
+    public List<LancamentoResponse> getAll() {
         return repository.findAll().stream().map(this::toResponse).toList();
     }
 
@@ -98,7 +100,7 @@ public class ReceitaService {
      * @return Um Optional contendo a Receita se encontrada, ou um Optional vazio.
      */
     @Transactional
-    public ReceitaResponse getByID(Long id) {
+    public LancamentoResponse getByID(Long id) {
 
         var r = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Receita não encontrada com id: " + id));
 
@@ -129,7 +131,14 @@ public class ReceitaService {
         repository.deleteAllById(ids);
     }
 
-    private ReceitaResponse toResponse(ReceitaEntity entity) {
-        return new ReceitaResponse(entity.getId(), entity.getDescricao(), entity.getValor(), entity.getDataCriacao(), entity.getCategoria().getId());
+    private LancamentoResponse toResponse(LancamentoEntity entity) {
+        return new LancamentoResponse(
+                entity.getId(),
+                entity.getDescricao(),
+                entity.getValor(),
+                entity.getTipoLancamento().name(),
+                entity.getDataCriacao(),
+                entity.getCategoriaMicro().getId()
+        );
     }
 }

@@ -2,10 +2,11 @@ package spring.gr.socioai.controller.http.responses;
 
 import java.time.LocalDateTime;
 
-public record ReceitaResponse(
+public record LancamentoResponse(
         Long id,
         String descricao,
         Double valor,
+        String tipoLancamento,
         LocalDateTime dataCriacao,
-        Long categoria
+        Long microCategoriaId
 ) {}

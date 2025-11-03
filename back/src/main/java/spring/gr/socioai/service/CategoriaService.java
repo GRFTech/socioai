@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.CategoriaDTO;
 import spring.gr.socioai.controller.http.responses.CategoriaResponse;
 import spring.gr.socioai.model.CategoriaEntity;
+import spring.gr.socioai.repository.AuthenticatedUserRepository;
 import spring.gr.socioai.repository.CategoriaRepository;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class CategoriaService {
 
     private final CategoriaRepository repository;
+    private final AuthenticatedUserRepository authenticatedUserRepository;
 
     /**
      * Converte um CategoriaDTO em uma entidade Categoria para persistência.
@@ -33,8 +35,6 @@ public class CategoriaService {
                 null,
                 dto.getNome(),
                 dto.getTipo(),
-                null,
-                null,
                 null,
                 null
         );
