@@ -49,10 +49,8 @@ public class SecurityConfigurations {
                         .accessDeniedHandler(new AccessDeniedExceptionHandler()))
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/app-exemplo/dashboard").hasAnyRole(UserRole.USER.getRole().toUpperCase(), UserRole.ADMIN.getRole().toUpperCase())
-                        .requestMatchers(HttpMethod.POST, "/api/app-exemplo/dashboard/adm").hasRole(UserRole.ADMIN.getRole().toUpperCase())
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers("/api/**").hasAnyRole(UserRole.USER.getRole().toUpperCase(), UserRole.ADMIN.getRole().toUpperCase())
                         .anyRequest().authenticated())
 
                 // Não tem problema por antes de um filtro desativado

@@ -13,7 +13,7 @@ import spring.gr.socioai.controller.http.requests.RegisterRequest;
 import spring.gr.socioai.controller.http.responses.TokenResponse;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 

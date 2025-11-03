@@ -12,12 +12,12 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionManager {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGeneric(Exception ex) {
-        log.error("Ocorreu um erro: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "Erro interno no servidor!"));
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<?> handleGeneric(Exception ex) {
+//        log.error("Ocorreu um erro: {}", ex.getMessage());
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(Map.of("error", "Erro interno no servidor!"));
+//    }
 
     // outros tratamentos de erro que façam sentido com o negócio da aplicação
 }
