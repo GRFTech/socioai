@@ -19,6 +19,7 @@ public class LancamentoService {
 
     private final LancamentoRepository repository;
     private final CategoriaMicroRepository categoriaMicroRepository;
+    private final MetaService metaService;
 
     /**
      * Converte um LancamentoDTO em uma entidade Lancamento para persistência.
@@ -47,6 +48,11 @@ public class LancamentoService {
     @Transactional
     public LancamentoResponse save(LancamentoDTO lancamentoDTO) {
         LancamentoEntity novoLancamento = convertToEntity(lancamentoDTO);
+
+        var microMeta = categoriaMicroRepository.getReferenceById(lancamentoDTO.getMicroCategoriaId());
+
+        metaService.atualizaMeta(microMeta.getMeta().getId(), lancamentoDTO);
+
         return toResponse(repository.save(novoLancamento));
     }
 

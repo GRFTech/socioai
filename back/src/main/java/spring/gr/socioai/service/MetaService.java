@@ -3,6 +3,7 @@ package spring.gr.socioai.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import spring.gr.socioai.controller.http.requests.LancamentoDTO;
 import spring.gr.socioai.controller.http.requests.MetaDTO;
 import spring.gr.socioai.controller.http.responses.MetaResponse;
 import spring.gr.socioai.model.MetaEntity;
@@ -133,5 +134,12 @@ public class MetaService {
 
     private MetaResponse toResponse(MetaEntity metaEntity) {
         return new MetaResponse(metaEntity.getId(), metaEntity.getDescricao(), metaEntity.getValorAtual(), metaEntity.getDataInicio(), metaEntity.getDataFim(), metaEntity.getCategoria().getId());
+    }
+
+    public void atualizaMeta(Long id, LancamentoDTO lancamentoDTO) {
+        var meta = repository.getReferenceById(id);
+
+        meta.setValorAtual(meta.getValorAtual() + lancamentoDTO.getValor());
+        repository.save(meta);
     }
 }
