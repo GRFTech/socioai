@@ -1,5 +1,6 @@
 package spring.gr.socioai.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import spring.gr.socioai.controller.http.responses.TokenResponse;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@SecurityRequirements(value = {})
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;

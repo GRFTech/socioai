@@ -20,6 +20,9 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
+springdoc:
+  swagger-ui:
+    path: /docs/swagger-ui.html
 
 logging:
   level:
