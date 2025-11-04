@@ -50,6 +50,8 @@ public class SecurityConfigurations {
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers("/docs/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/**").hasAnyRole(UserRole.USER.getRole().toUpperCase(), UserRole.ADMIN.getRole().toUpperCase())
                         .anyRequest().authenticated())
 
