@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.gr.socioai.controller.http.requests.CategoriaDTO;
 import spring.gr.socioai.controller.http.responses.CategoriaResponse;
-import spring.gr.socioai.model.CategoriaEntity;
 import spring.gr.socioai.service.CategoriaService;
 
 import java.util.List;
@@ -88,6 +87,19 @@ public class CategoriaController {
     @GetMapping("/{id}")
     public ResponseEntity<CategoriaResponse> getByID(@PathVariable Long id) {
         return ResponseEntity.ok(this.service.getByID(id));
+    }
+
+
+    /**
+     * Endpoint para buscar todas as categorias de um usuário específico
+     *
+     * @param username O username do usuário
+     * @return ResponseEntity com a lista de categorias e um status 200
+     * ou um ResponseEntity com uma lista vazia e um status 200
+     */
+    @GetMapping("/username/{username}")
+    public ResponseEntity<List<CategoriaResponse>> getAllCategoriasByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(this.service.getAllCategoriasByUsername(username));
     }
 
     /**

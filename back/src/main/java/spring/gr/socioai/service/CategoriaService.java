@@ -136,4 +136,17 @@ public class CategoriaService {
     private CategoriaResponse toResponse(CategoriaEntity entity) {
         return new CategoriaResponse(entity.getId() ,entity.getNome(), entity.getUser().getUsername());
     }
+
+    /**
+     * Busca todas as categorias atreladas a um usuário no repositório
+     * e transforma em resposta para envio ao front-end
+     *
+     * @param username Username do usuário
+     * @return uma lista com as respostas prontas pra envio
+     */
+    public List<CategoriaResponse> getAllCategoriasByUsername(String username) {
+        var list = this.repository.getAllByUser_Username(new Email(username));
+
+        return list.stream().map(this::toResponse).toList();
+    }
 }
