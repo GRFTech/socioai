@@ -112,8 +112,8 @@ public class AuthenticatedUserController {
      * @param ids Lista de IDs (UUID) dos Usuários a serem deletados.
      * @return Resposta vazia com status 204 No Content.
      */
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAllUsers(@RequestParam List<UUID> ids) {
+    @DeleteMapping("/batch")
+    public ResponseEntity<Void> deleteAllUsers(@RequestBody List<UUID> ids) {
         if (ids == null || ids.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A lista de IDs não pode estar vazia.");
         }
