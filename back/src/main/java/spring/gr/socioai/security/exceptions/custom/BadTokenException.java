@@ -1,6 +1,8 @@
 package spring.gr.socioai.security.exceptions.custom;
 
-public class BadTokenException extends RuntimeException {
+import org.springframework.security.core.AuthenticationException;
+
+public class BadTokenException extends AuthenticationException {
   public BadTokenException(String message) {
     super(message);
   }
