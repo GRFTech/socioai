@@ -21,10 +21,9 @@ public class CategoriaDTO {
     private String nome;
 
     /**
-     * O tipo da categoria (ex: Receita, Despesa). Deve ser obrigatório e ter no máximo 10 caracteres.
+     * O nome do usuário que essa categoria pertence
      */
-    @NotBlank(message = "O tipo da categoria é obrigatório")
-    @Size(max = 10, message = "O tipo deve ter no máximo 10 caracteres")
-    private String tipo;
+    @NotBlank(message = "O nome do usuário não pode estar em branco")
+    private String username;
 
 }

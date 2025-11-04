@@ -23,9 +23,6 @@ public class CategoriaEntity {
     @Column(length = 45, nullable = false)
     private String nome;
 
-    @Column(length = 10, nullable = false)
-    private String tipo;
-
     @ManyToOne(fetch = FetchType.LAZY)
     private AuthenticatedUserEntity user;
 

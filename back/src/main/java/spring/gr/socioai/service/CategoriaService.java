@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.CategoriaDTO;
 import spring.gr.socioai.controller.http.responses.CategoriaResponse;
 import spring.gr.socioai.model.CategoriaEntity;
+import spring.gr.socioai.model.valueobjects.Email;
 import spring.gr.socioai.repository.AuthenticatedUserRepository;
 import spring.gr.socioai.repository.CategoriaRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +34,8 @@ public class CategoriaService {
         return new CategoriaEntity(
                 null,
                 dto.getNome(),
-                dto.getTipo(),
-                null,
+                authenticatedUserRepository.findByUsername(new Email(dto.getUsername())).orElseThrow(()
+                        -> new NoSuchElementException("Nenhum usuário com esse nome encontrado")),
                 null
         );
     }
@@ -80,7 +80,6 @@ public class CategoriaService {
                 .orElseThrow(() -> new NoSuchElementException("Categoria com ID " + id + " não encontrada para atualização."));
 
         existingCategoria.setNome(categoriaDTO.getNome());
-        existingCategoria.setTipo(categoriaDTO.getTipo());
 
         return toResponse(repository.save(existingCategoria));
     }
@@ -135,6 +134,6 @@ public class CategoriaService {
 
 
     private CategoriaResponse toResponse(CategoriaEntity entity) {
-        return new CategoriaResponse(entity.getId() ,entity.getNome(), entity.getTipo(), entity.getUser().getUsername());
+        return new CategoriaResponse(entity.getId() ,entity.getNome(), entity.getUser().getUsername());
     }
 }
