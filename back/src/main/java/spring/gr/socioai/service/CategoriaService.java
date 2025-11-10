@@ -8,6 +8,7 @@ import spring.gr.socioai.controller.http.responses.CategoriaResponse;
 import spring.gr.socioai.model.CategoriaEntity;
 import spring.gr.socioai.model.valueobjects.Email;
 import spring.gr.socioai.repository.AuthenticatedUserRepository;
+import spring.gr.socioai.repository.CategoriaMicroRepository;
 import spring.gr.socioai.repository.CategoriaRepository;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class CategoriaService {
 
     private final CategoriaRepository repository;
     private final AuthenticatedUserRepository authenticatedUserRepository;
+    private final CategoriaMicroRepository categoriaMicroRepository;
 
     /**
      * Converte um CategoriaDTO em uma entidade Categoria para persistência.
@@ -30,7 +32,7 @@ public class CategoriaService {
      * @param dto O DTO contendo nome e tipo da categoria.
      * @return A entidade Categoria pronta para ser salva.
      */
-    private CategoriaEntity convertToEntity(CategoriaDTO dto) {
+    public CategoriaEntity convertToEntity(CategoriaDTO dto) {
         return new CategoriaEntity(
                 null,
                 dto.getNome(),
@@ -38,6 +40,16 @@ public class CategoriaService {
                         -> new NoSuchElementException("Nenhum usuário com esse nome encontrado")),
                 null
         );
+    }
+
+    public CategoriaEntity convertToEntity(CategoriaResponse dto) {
+        return new CategoriaEntity(
+                dto.id(),
+                dto.nome(),
+                authenticatedUserRepository.findByUsername(new Email(dto.nome()))
+                        .orElseThrow(() -> new NoSuchElementException("Usuário não existente!")),
+                repository.getReferenceById(dto.id()).getCategorias()
+                );
     }
 
     /**
@@ -148,5 +160,9 @@ public class CategoriaService {
         var list = this.repository.getAllByUser_Username(new Email(username));
 
         return list.stream().map(this::toResponse).toList();
+    }
+
+    public CategoriaEntity findByID(Long id) {
+        return repository.getReferenceById(id);
     }
 }

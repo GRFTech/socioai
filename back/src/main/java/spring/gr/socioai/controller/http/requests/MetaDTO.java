@@ -1,5 +1,6 @@
 package spring.gr.socioai.controller.http.requests;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -15,13 +16,18 @@ public class MetaDTO {
     @Size(max = 45, message = "A descrição deve ter no máximo 45 caracteres")
     private String descricao;
 
-    @NotNull(message = "O valor atual é obrigatório")
     @PositiveOrZero(message = "O valor atual não pode ser negativo")
     private Double valorAtual;
 
-    @NotNull(message = "A data de início é obrigatória")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataInicio;
 
-    @NotNull(message = "A data de fim é obrigatória")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataFim;
+
+    @NotBlank(message = "O nome de usuário não pode estar em branco")
+    private String username;
+
+    @NotBlank(message = "A categoria não pode estar em branco")
+    private String categoria;
 }

@@ -6,7 +6,11 @@ import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.LancamentoDTO;
 import spring.gr.socioai.controller.http.requests.MetaDTO;
 import spring.gr.socioai.controller.http.responses.MetaResponse;
+import spring.gr.socioai.model.CategoriaMicroEntity;
 import spring.gr.socioai.model.MetaEntity;
+import spring.gr.socioai.model.valueobjects.Email;
+import spring.gr.socioai.repository.CategoriaMicroRepository;
+import spring.gr.socioai.repository.CategoriaRepository;
 import spring.gr.socioai.repository.MetaRepository;
 
 import java.util.List;
@@ -17,6 +21,11 @@ import java.util.NoSuchElementException;
 public class MetaService {
 
     private final MetaRepository repository;
+    private final CategoriaMicroService categoriaMicroService;
+    private final AuthenticatedUserService authenticatedUserService;
+    private final CategoriaService categoriaService;
+    private final CategoriaRepository categoriaRepository;
+    private final CategoriaMicroRepository categoriaMicroRepository;
 
     /**
      * Converte um MetasDTO em uma entidade Metas para persistência.
@@ -40,13 +49,28 @@ public class MetaService {
     /**
      * Salva uma nova Meta no banco de dados.
      *
-     * @param metasDTO DTO contendo os dados da meta a ser salva.
+     * @param metaDTO DTO contendo os dados da meta a ser salva.
      * @return A Meta salva, incluindo o ID gerado.
      */
     @Transactional
-    public MetaResponse save(MetaDTO metasDTO) {
-        MetaEntity novaMeta = convertToEntity(metasDTO);
-        return toResponse(repository.save(novaMeta));
+    public MetaResponse save(MetaDTO metaDTO) {
+        MetaEntity novaMeta = convertToEntity(metaDTO);
+
+        var user = this.authenticatedUserService.getByUsername(metaDTO.getUsername())
+                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado com username: " + metaDTO.getUsername()));
+
+        var categoriasDoUsuario = this.categoriaRepository.getAllByUser_Username(new Email(metaDTO.getUsername()));
+
+        var categoriaFinded = categoriasDoUsuario.stream()
+                .filter(c -> c.getNome().equals(metaDTO.getCategoria()))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("O usuário " + user.username() + " não possui a categoria: " + metaDTO.getCategoria()));
+
+        var meta = repository.save(novaMeta);
+
+        this.categoriaMicroService.save(new CategoriaMicroEntity(null, meta, categoriaFinded, null));
+
+        return toResponse(meta);
     }
 
     /**
@@ -133,7 +157,7 @@ public class MetaService {
     }
 
     private MetaResponse toResponse(MetaEntity metaEntity) {
-        return new MetaResponse(metaEntity.getId(), metaEntity.getDescricao(), metaEntity.getValorAtual(), metaEntity.getDataInicio(), metaEntity.getDataFim(), metaEntity.getCategoria().getId());
+        return new MetaResponse(metaEntity.getId(), metaEntity.getDescricao(), metaEntity.getValorAtual(), metaEntity.getDataInicio(), metaEntity.getDataFim(), null);
     }
 
     public void atualizaMeta(Long id, LancamentoDTO lancamentoDTO) {
