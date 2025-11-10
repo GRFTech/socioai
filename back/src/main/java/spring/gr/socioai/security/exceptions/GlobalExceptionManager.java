@@ -1,5 +1,6 @@
 package spring.gr.socioai.security.exceptions;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -55,6 +56,12 @@ public class GlobalExceptionManager {
         log.error("Falha na autenticação: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Falha na autenticação. Detalhe: " + ex.getMessage()));
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<Map<String, String>> handleTokenExpired(TokenExpiredException ex) {
+        log.error("Token de acesso expirado: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Token de acesso expirado, faça login novamente e pegue um novo token. Detalhe: " + ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
