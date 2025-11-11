@@ -1,5 +1,7 @@
 package spring.gr.socioai.controller.http.requests;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -10,19 +12,18 @@ import java.time.LocalDateTime;
 @Data
 public class LancamentoDTO {
 
-    @NotNull(message = "A receita deve ter uma descrição")
+    @NotBlank(message = "O lançamento deve ter uma descrição")
     private String descricao;
 
-    @NotNull(message = "O valor da receita é obrigatório")
-    @Positive(message = "O valor deve ser positivo")
+    @NotNull(message = "O valor do lançamento é obrigatório")
     private Double valor;
 
-    @NotNull(message = "A data de criação é obrigatória")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataCriacao;
 
-    @NotNull(message = "O tipo do lançamento é obrigatório")
+    @NotBlank(message = "O tipo do lançamento é obrigatório")
     private String tipoLancamento;
 
-    @PositiveOrZero(message = "O id da categoria é maior ou igual a zero")
+    @Positive(message = "O id da categoria é maior que zero")
     private Long microCategoriaId;
 }
