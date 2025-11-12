@@ -1,6 +1,7 @@
 package spring.gr.socioai.security.exceptions;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -69,5 +70,12 @@ public class GlobalExceptionManager {
         log.error("Erro interno no servidor não mapeado:", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Erro interno no servidor. Por favor, tente novamente mais tarde."));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEntityNotFound(EntityNotFoundException ex) {
+        log.warn("Tentativa de acessar entidade inexistente: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "Entidade não encontrada. Detalhe: " + ex.getMessage()));
     }
 }

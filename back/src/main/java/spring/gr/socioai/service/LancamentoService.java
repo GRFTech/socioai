@@ -7,8 +7,8 @@ import spring.gr.socioai.controller.http.requests.LancamentoDTO;
 import spring.gr.socioai.controller.http.responses.LancamentoResponse;
 import spring.gr.socioai.model.LancamentoEntity;
 import spring.gr.socioai.model.valueobjects.TipoLancamento;
-import spring.gr.socioai.repository.CategoriaMicroRepository;
 import spring.gr.socioai.repository.LancamentoRepository;
+import spring.gr.socioai.repository.MetaRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -18,8 +18,8 @@ import java.util.NoSuchElementException;
 public class LancamentoService {
 
     private final LancamentoRepository repository;
-    private final CategoriaMicroRepository categoriaMicroRepository;
     private final MetaService metaService;
+    private final MetaRepository metaRepository;
 
     /**
      * Converte um LancamentoDTO em uma entidade Lancamento para persistência.
@@ -35,7 +35,7 @@ public class LancamentoService {
                 dto.getValor(),
                 TipoLancamento.valueOf(dto.getTipoLancamento()),
                 dto.getDataCriacao(),
-                categoriaMicroRepository.getReferenceById(dto.getMicroCategoriaId())
+                metaRepository.getReferenceById(dto.getMeta())
         );
     }
 
@@ -48,11 +48,7 @@ public class LancamentoService {
     @Transactional
     public LancamentoResponse save(LancamentoDTO lancamentoDTO) {
         LancamentoEntity novoLancamento = convertToEntity(lancamentoDTO);
-
-        var microMeta = categoriaMicroRepository.getReferenceById(lancamentoDTO.getMicroCategoriaId());
-
-        metaService.atualizaMeta(microMeta.getMeta().getId(), lancamentoDTO);
-
+        metaService.atualizaMeta(lancamentoDTO.getMeta(), lancamentoDTO);
         return toResponse(repository.save(novoLancamento));
     }
 
@@ -144,7 +140,7 @@ public class LancamentoService {
                 entity.getValor(),
                 entity.getTipoLancamento().name(),
                 entity.getDataCriacao(),
-                entity.getCategoriaMicro().getId()
+                entity.getMeta().getId()
         );
     }
 }

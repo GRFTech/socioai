@@ -24,8 +24,9 @@ public class CategoriaEntity {
     private String nome;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private AuthenticatedUserEntity user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
-    private List<CategoriaMicroEntity> categorias;
+    private List<MetaEntity> metas;
 }

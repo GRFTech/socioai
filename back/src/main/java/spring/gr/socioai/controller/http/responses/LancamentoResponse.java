@@ -8,5 +8,5 @@ public record LancamentoResponse(
         Double valor,
         String tipoLancamento,
         LocalDateTime dataCriacao,
-        Long microCategoriaId
+        Long meta
 ) {}

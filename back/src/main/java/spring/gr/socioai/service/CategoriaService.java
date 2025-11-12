@@ -6,10 +6,11 @@ import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.CategoriaDTO;
 import spring.gr.socioai.controller.http.responses.CategoriaResponse;
 import spring.gr.socioai.model.CategoriaEntity;
+import spring.gr.socioai.model.MetaEntity;
 import spring.gr.socioai.model.valueobjects.Email;
 import spring.gr.socioai.repository.AuthenticatedUserRepository;
-import spring.gr.socioai.repository.CategoriaMicroRepository;
 import spring.gr.socioai.repository.CategoriaRepository;
+import spring.gr.socioai.repository.MetaRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,7 +21,6 @@ public class CategoriaService {
 
     private final CategoriaRepository repository;
     private final AuthenticatedUserRepository authenticatedUserRepository;
-    private final CategoriaMicroRepository categoriaMicroRepository;
 
     /**
      * Converte um CategoriaDTO em uma entidade Categoria para persistência.
@@ -48,7 +48,7 @@ public class CategoriaService {
                 dto.nome(),
                 authenticatedUserRepository.findByUsername(new Email(dto.nome()))
                         .orElseThrow(() -> new NoSuchElementException("Usuário não existente!")),
-                repository.getReferenceById(dto.id()).getCategorias()
+                repository.getReferenceById(dto.id()).getMetas()
                 );
     }
 
@@ -146,7 +146,12 @@ public class CategoriaService {
 
 
     private CategoriaResponse toResponse(CategoriaEntity entity) {
-        return new CategoriaResponse(entity.getId() ,entity.getNome(), entity.getUser().getUsername());
+        return new CategoriaResponse(
+                entity.getId(),
+                entity.getNome(),
+                entity.getUser().getUsername(),
+                entity.getMetas().stream().map(MetaEntity::getId).toList()
+        );
     }
 
     /**

@@ -25,9 +25,6 @@ public class MetaDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataFim;
 
-    @NotBlank(message = "O nome de usuário não pode estar em branco")
-    private String username;
-
-    @NotBlank(message = "A categoria não pode estar em branco")
-    private String categoria;
+    @NotNull(message = "A categoria não pode estar em branco")
+    private Long categoria;
 }

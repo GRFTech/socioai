@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "METAS_TB")
@@ -33,6 +34,10 @@ public class MetaEntity {
     @Column(nullable = false)
     private LocalDate dataFim;
 
-    @OneToOne(mappedBy = "meta")
-    private CategoriaMicroEntity categoria;
+    @ManyToOne(fetch =  FetchType.LAZY)
+    @JoinColumn(name = "categoria_id")
+    private CategoriaEntity categoria;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "meta")
+    private List<LancamentoEntity> lancamentos;
 }

@@ -35,6 +35,6 @@ public class LancamentoEntity {
     private LocalDateTime dataCriacao;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_micro_id")
-    private CategoriaMicroEntity categoriaMicro;
+    @JoinColumn(name = "meta_id")
+    private MetaEntity meta;
 }

@@ -24,6 +24,7 @@ public class LancamentoDTO {
     @NotBlank(message = "O tipo do lançamento é obrigatório")
     private String tipoLancamento;
 
-    @Positive(message = "O id da categoria é maior que zero")
-    private Long microCategoriaId;
+    @NotNull(message = "O id da meta é obrigatório")
+    @Positive(message = "O id da meta é maior que zero")
+    private Long meta;
 }
