@@ -130,7 +130,7 @@ public class CategoriaService {
     @Transactional
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new NoSuchElementException("Categoria com ID " + id + " não encontrada para deleção.");
+            throw new NoSuchElementException("Categoria com ID " + id + " não encontrada para remoção");
         }
         repository.deleteById(id);
     }
