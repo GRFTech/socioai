@@ -43,16 +43,6 @@ public class CategoriaService {
         );
     }
 
-    public CategoriaEntity convertToEntity(CategoriaResponse dto) {
-        return new CategoriaEntity(
-                dto.id(),
-                dto.nome(),
-                authenticatedUserRepository.findByUsername(new Email(dto.nome()))
-                        .orElseThrow(() -> new NoSuchElementException("Usuário não existente!")),
-                repository.getReferenceById(dto.id()).getMetas()
-                );
-    }
-
     /**
      * Salva uma nova Categoria no banco de dados.
      *
@@ -151,7 +141,7 @@ public class CategoriaService {
                 entity.getId(),
                 entity.getNome(),
                 entity.getUser().getUsername(),
-                entity.getMetas().stream().map(MetaEntity::getId).toList()
+                entity.getMetas() == null ? null : entity.getMetas().stream().map(MetaEntity::getId).toList()
         );
     }
 
