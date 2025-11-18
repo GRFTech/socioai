@@ -1,5 +1,6 @@
 package spring.gr.socioai.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -162,6 +163,10 @@ public class CategoriaService {
      * @return uma lista com as respostas prontas pra envio
      */
     public List<CategoriaResponse> getAllCategoriasByUsername(String username) {
+
+        this.authenticatedUserRepository.findByUsername(new Email(username))
+                .orElseThrow(() -> new EntityNotFoundException("Usuário com username: '" + username + "' não encontrado"));
+
         var list = this.repository.getAllByUser_Username(new Email(username));
 
         return list.stream().map(this::toResponse).toList();
