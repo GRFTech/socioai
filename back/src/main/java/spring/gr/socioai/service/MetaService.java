@@ -122,7 +122,7 @@ public class MetaService {
     @Transactional
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new NoSuchElementException("Meta com ID " + id + " não encontrada para deleção.");
+            throw new NoSuchElementException("Meta com ID " + id + " não encontrada para remoção");
         }
         repository.deleteById(id);
     }
