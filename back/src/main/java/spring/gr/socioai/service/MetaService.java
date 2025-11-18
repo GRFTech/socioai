@@ -145,7 +145,7 @@ public class MetaService {
                 metaEntity.getDataInicio(),
                 metaEntity.getDataFim(),
                 metaEntity.getCategoria().getId(),
-                metaEntity.getLancamentos().stream().map(LancamentoEntity::getId).toList()
+                metaEntity.getLancamentos() == null ? null : metaEntity.getLancamentos().stream().map(LancamentoEntity::getId).toList()
         );
     }
 
