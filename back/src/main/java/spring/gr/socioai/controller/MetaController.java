@@ -65,12 +65,8 @@ public class MetaController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<MetaResponse> update(@PathVariable Long id, @Valid @RequestBody MetaDTO metasDTO) {
-        try {
-            var updatedMeta = service.update(id, metasDTO);
-            return ResponseEntity.ok(updatedMeta);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+        var updatedMeta = service.update(id, metasDTO);
+        return ResponseEntity.ok(updatedMeta);
     }
 
     /**
