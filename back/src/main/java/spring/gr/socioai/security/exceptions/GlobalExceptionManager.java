@@ -6,11 +6,13 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,5 +79,19 @@ public class GlobalExceptionManager {
         log.warn("Tentativa de acessar entidade inexistente: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", "Entidade não encontrada. Detalhe: " + ex.getMessage()));
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<Map<String, String>> handleMethodValidationException(HandlerMethodValidationException ex) {
+        log.warn("Tentativa de chamada com dados inválidos: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Os dados enviados estão incorretos. Verifique os dados e tente novamente"));
+    }
+
+    @ExceptionHandler(JpaObjectRetrievalFailureException.class)
+    public ResponseEntity<Map<String, String>> handleJpaObjectRetrievalFailure(JpaObjectRetrievalFailureException ex) {
+        log.warn("Tentativa de recuperar objetos inválidos: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "O objeto que você tentou recuperar não é válido. Verifique os dados e tente novamente"));
     }
 }
