@@ -33,7 +33,7 @@ public class LancamentoService {
                 null,
                 dto.getDescricao(),
                 dto.getValor(),
-                TipoLancamento.valueOf(dto.getTipoLancamento()),
+                dto.getValor() > 0 ? TipoLancamento.RECEITA : TipoLancamento.DESPESA,
                 dto.getDataCriacao(),
                 metaRepository.getReferenceById(dto.getMeta())
         );
@@ -60,10 +60,15 @@ public class LancamentoService {
      */
     @Transactional
     public List<LancamentoResponse> saveAll(List<LancamentoDTO> lancamentoDTO) {
+
         List<LancamentoEntity> receitas = lancamentoDTO.stream()
+                .peek(l -> metaService.atualizaMeta(l.getMeta(), l))
                 .map(this::convertToEntity)
                 .toList();
-        return repository.saveAll(receitas).stream().map(this::toResponse).toList();
+
+        return repository.saveAll(receitas).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     /**
@@ -76,13 +81,27 @@ public class LancamentoService {
      */
     @Transactional
     public LancamentoResponse update(Long id, LancamentoDTO lancamentoDTO) {
-        LancamentoEntity existingReceita = repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Receita com ID " + id + " não encontrada para atualização."));
+        var existingLancamento = repository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Lancamento com ID " + id + " não encontrado para atualização."));
 
-        existingReceita.setValor(lancamentoDTO.getValor());
-        existingReceita.setDataCriacao(lancamentoDTO.getDataCriacao());
+        var meta = metaRepository.findById(lancamentoDTO.getMeta())
+                .orElseThrow(() -> new NoSuchElementException("Meta com id " + lancamentoDTO.getMeta() + " não encontrada"));
 
-        return toResponse(repository.save(existingReceita));
+        var vMeta = meta.getValorAtual();
+        var vLN = lancamentoDTO.getValor();
+        var vLA = existingLancamento.getValor();
+
+        vMeta -= vLA;
+        vMeta += vLN;
+
+        meta.setValorAtual(vMeta);
+        metaRepository.save(meta);
+
+        existingLancamento.setValor(lancamentoDTO.getValor());
+        existingLancamento.setDescricao(lancamentoDTO.getDescricao());
+        existingLancamento.setDataCriacao(lancamentoDTO.getDataCriacao());
+
+        return toResponse(repository.save(existingLancamento));
     }
 
     /**
@@ -117,9 +136,20 @@ public class LancamentoService {
      */
     @Transactional
     public void delete(Long id) {
-        if (!repository.existsById(id)) {
-            throw new NoSuchElementException("Receita com ID " + id + " não encontrada para deleção.");
-        }
+
+        var existingLancamento = repository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Receita com ID " + id + " não encontrada para deleção."));
+
+        var meta = existingLancamento.getMeta();
+
+        var vMeta = meta.getValorAtual();
+        var vLA = existingLancamento.getValor();
+
+        vMeta -= vLA;
+
+        meta.setValorAtual(vMeta);
+        metaRepository.save(meta);
+
         repository.deleteById(id);
     }
 
@@ -130,7 +160,7 @@ public class LancamentoService {
      */
     @Transactional
     public void deleteAll(List<Long> ids) {
-        repository.deleteAllById(ids);
+        ids.forEach(this::delete);
     }
 
     private LancamentoResponse toResponse(LancamentoEntity entity) {

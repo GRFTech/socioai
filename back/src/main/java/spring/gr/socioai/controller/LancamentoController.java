@@ -56,12 +56,8 @@ public class LancamentoController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<LancamentoResponse> update(@PathVariable Long id, @Valid @RequestBody LancamentoDTO lancamentoDTO) {
-        try {
-            var updatedLancamento = service.update(id, lancamentoDTO);
-            return ResponseEntity.ok(updatedLancamento);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+        var updatedLancamento = service.update(id, lancamentoDTO);
+        return ResponseEntity.ok(updatedLancamento);
     }
 
     /**

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
+import spring.gr.socioai.util.annotations.notzero.NotZero;
 
 import java.time.LocalDateTime;
 
@@ -16,13 +16,11 @@ public class LancamentoDTO {
     private String descricao;
 
     @NotNull(message = "O valor do lançamento é obrigatório")
+    @NotZero(message = "O valor não pode ser igual a zero")
     private Double valor;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataCriacao;
-
-    @NotBlank(message = "O tipo do lançamento é obrigatório")
-    private String tipoLancamento;
 
     @NotNull(message = "O id da meta é obrigatório")
     @Positive(message = "O id da meta é maior que zero")
