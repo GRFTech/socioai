@@ -3,6 +3,7 @@ package spring.gr.socioai.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.LancamentoDTO;
 import spring.gr.socioai.controller.http.requests.MetaDTO;
@@ -52,6 +53,7 @@ public class MetaService {
      * @return A Meta salva, incluindo o ID gerado.
      */
     @Transactional
+    @PreAuthorize("hasPermission(#metaDTO.categoria, 'categoria', 'WRITE')")
     public MetaResponse save(MetaDTO metaDTO) {
         MetaEntity novaMeta = convertToEntity(metaDTO);
         var meta = repository.save(novaMeta);
@@ -65,6 +67,7 @@ public class MetaService {
      * @return Lista das Metas salvas, cada uma com seu ID gerado.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MetaResponse> saveAll(List<MetaDTO> metasDTO) {
         List<MetaEntity> metas = metasDTO.stream()
                 .map(this::convertToEntity)
@@ -81,6 +84,7 @@ public class MetaService {
      * @throws NoSuchElementException se a Meta com o ID fornecido não for encontrada.
      */
     @Transactional
+    @PreAuthorize("hasPermission(#id, 'meta', 'WRITE')")
     public MetaResponse update(Long id, MetaDTO metasDTO) {
         MetaEntity existingMeta = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Meta com ID " + id + " não encontrada para atualização."));
@@ -99,6 +103,7 @@ public class MetaService {
      * @return Uma lista de todas as Metas.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MetaResponse> getAll() {
         return repository.findAll().stream().map(this::toResponse).toList();
     }
@@ -110,6 +115,7 @@ public class MetaService {
      * @return Um Optional contendo a Meta se encontrada, ou um Optional vazio.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public MetaResponse getByID(Long id) {
 
         var m = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Meta não encontrada para id: " + id));
@@ -124,6 +130,7 @@ public class MetaService {
      * @throws NoSuchElementException se a Meta com o ID fornecido não for encontrada.
      */
     @Transactional
+    @PreAuthorize("hasPermission(#id, 'meta', 'DELETE')")
     public void delete(Long id) {
         if (!repository.existsById(id)) {
             throw new NoSuchElementException("Meta com ID " + id + " não encontrada para remoção");
@@ -137,6 +144,7 @@ public class MetaService {
      * @param ids Lista de IDs das Metas a serem deletadas.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteAll(List<Long> ids) {
         repository.deleteAllById(ids);
     }
@@ -148,6 +156,7 @@ public class MetaService {
      * @return uma lista com todas as metas dele ou lança uma exception dizendo que o usuário não existe
      */
     @Transactional
+    @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public List<MetaResponse> getAllMetasByUsername(String username) {
 
         if(!authenticatedUserRepository.existsByUsername(new Email(username))){

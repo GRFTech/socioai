@@ -2,6 +2,7 @@ package spring.gr.socioai.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.AuthenticatedUserRoleDTO;
 import spring.gr.socioai.controller.http.responses.AuthenticatedUserRoleResponse;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AuthenticatedUserRoleService {
 
     private final AuthenticatedUserRoleRepository repository;

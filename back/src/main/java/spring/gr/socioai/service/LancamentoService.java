@@ -3,6 +3,7 @@ package spring.gr.socioai.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import spring.gr.socioai.controller.http.requests.LancamentoDTO;
 import spring.gr.socioai.controller.http.responses.LancamentoResponse;
@@ -50,6 +51,7 @@ public class LancamentoService {
      * @return A Receita salva, incluindo o ID gerado.
      */
     @Transactional
+    @PreAuthorize("hasPermission(#lancamentoDTO.meta, 'meta', 'WRITE')")
     public LancamentoResponse save(LancamentoDTO lancamentoDTO) {
         LancamentoEntity novoLancamento = convertToEntity(lancamentoDTO);
         metaService.atualizaMeta(lancamentoDTO.getMeta(), lancamentoDTO);
@@ -63,6 +65,7 @@ public class LancamentoService {
      * @return Lista das Receitas salvas, cada uma com seu ID gerado.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<LancamentoResponse> saveAll(List<LancamentoDTO> lancamentoDTO) {
 
         List<LancamentoEntity> receitas = lancamentoDTO.stream()
@@ -84,6 +87,7 @@ public class LancamentoService {
      * @throws NoSuchElementException se a Receita com o ID fornecido não for encontrada.
      */
     @Transactional
+    @PreAuthorize("hasPermission(#id, 'lancamento', 'WRITE') and hasPermission(#lancamentoDTO.meta, 'meta', 'WRITE')")
     public LancamentoResponse update(Long id, LancamentoDTO lancamentoDTO) {
         var existingLancamento = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Lancamento com ID " + id + " não encontrado para atualização."));
@@ -114,6 +118,7 @@ public class LancamentoService {
      * @return Uma lista de todas as Receitas.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<LancamentoResponse> getAll() {
         return repository.findAll().stream().map(this::toResponse).toList();
     }
@@ -125,6 +130,7 @@ public class LancamentoService {
      * @return Um Optional contendo a Receita se encontrada, ou um Optional vazio.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public LancamentoResponse getByID(Long id) {
 
         var r = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Receita não encontrada com id: " + id));
@@ -139,6 +145,7 @@ public class LancamentoService {
      * @throws NoSuchElementException se a Receita com o ID fornecido não for encontrada.
      */
     @Transactional
+    @PreAuthorize("hasPermission(#id, 'lancamento', 'DELETE')")
     public void delete(Long id) {
 
         var existingLancamento = repository.findById(id)
@@ -163,6 +170,7 @@ public class LancamentoService {
      * @param ids Lista de IDs das Receitas a serem deletadas.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteAll(List<Long> ids) {
         ids.forEach(this::delete);
     }
@@ -174,6 +182,7 @@ public class LancamentoService {
      * @return retorna uma lista de lançamentos ou lança uma exceção dizendo que o usuário não existe
      */
     @Transactional
+    @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public List<LancamentoResponse> getAllLancamentosByUsername(String username) {
 
         var u = new Email(username);

@@ -2,6 +2,7 @@ package spring.gr.socioai.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.AuthenticatedUserEntityDTO;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AuthenticatedUserService {
     private final AuthenticatedUserRepository userRepository;
     private final AuthenticatedUserRoleRepository userRoleRepository;
@@ -33,6 +35,7 @@ public class AuthenticatedUserService {
      * @throws NoSuchElementException se o Usuário ou a nova Role não for encontrada.
      */
     @Transactional
+    @PreAuthorize("#userDTO.username == authentication.name")
     public AuthenticatedUserEntityResponse update(String username, AuthenticatedUserEntityDTO userDTO) {
         var existingUser = userRepository.findByUsername(new Email(username))
                 .orElseThrow(() -> new NoSuchElementException("Usuário com username " + username + " não encontrado para atualização."));

@@ -3,6 +3,7 @@ package spring.gr.socioai.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.CategoriaDTO;
 import spring.gr.socioai.controller.http.responses.CategoriaResponse;
@@ -50,6 +51,7 @@ public class CategoriaService {
      * @return A Categoria salva, incluindo o ID gerado.
      */
     @Transactional
+    @PreAuthorize("#categoriaDTO.username == authentication.name")
     public CategoriaResponse save(CategoriaDTO categoriaDTO) {
         CategoriaEntity novaCategoria = convertToEntity(categoriaDTO);
         return toResponse(repository.save(novaCategoria));
@@ -62,6 +64,7 @@ public class CategoriaService {
      * @return Lista das Categorias salvas, cada uma com seu ID gerado.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<CategoriaResponse> saveAll(List<CategoriaDTO> categoriasDTO) {
         List<CategoriaEntity> categorias = categoriasDTO.stream()
                 .map(this::convertToEntity)
@@ -78,6 +81,7 @@ public class CategoriaService {
      * @throws NoSuchElementException se a Categoria com o ID fornecido não for encontrada.
      */
     @Transactional
+    @PreAuthorize("hasPermission(#id, 'categoria', 'WRITE')")
     public CategoriaResponse update(Long id, CategoriaDTO categoriaDTO) {
         CategoriaEntity existingCategoria = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Categoria com ID " + id + " não encontrada para atualização."));
@@ -93,6 +97,7 @@ public class CategoriaService {
      * @return Uma lista de todas as Categoria.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<CategoriaResponse> getAll() {
         return repository.findAll().stream().map(this::toResponse).toList();
     }
@@ -104,6 +109,7 @@ public class CategoriaService {
      * @return Um Optional contendo a Categoria se encontrada, ou um Optional vazio.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public CategoriaResponse getByID(Long id) {
 
         var c = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Categoria não encontrada!"));
@@ -118,6 +124,7 @@ public class CategoriaService {
      * @throws NoSuchElementException se a Categoria com o ID fornecido não for encontrada.
      */
     @Transactional
+    @PreAuthorize("hasPermission(#id, 'categoria', 'DELETE')")
     public void delete(Long id) {
         if (!repository.existsById(id)) {
             throw new NoSuchElementException("Categoria com ID " + id + " não encontrada para remoção");
@@ -131,6 +138,7 @@ public class CategoriaService {
      * @param ids Lista de IDs das Categorias a serem deletadas.
      */
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteAll(List<Long> ids) {
         repository.deleteAllById(ids);
     }
@@ -152,6 +160,8 @@ public class CategoriaService {
      * @param username Username do usuário
      * @return uma lista com as respostas prontas pra envio
      */
+    @Transactional
+    @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public List<CategoriaResponse> getAllCategoriasByUsername(String username) {
 
         this.authenticatedUserRepository.findByUsername(new Email(username))
