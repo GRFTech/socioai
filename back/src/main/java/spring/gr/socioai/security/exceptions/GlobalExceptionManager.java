@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class GlobalExceptionManager {
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<Map<String, String>> handleMethodValidationException(HandlerMethodValidationException ex) {
+    public ResponseEntity<Map<String, String>> handleMethodValidation(HandlerMethodValidationException ex) {
         log.warn("Tentativa de chamada com dados inválidos: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Os dados enviados estão incorretos. Verifique os dados e tente novamente"));
@@ -93,5 +94,12 @@ public class GlobalExceptionManager {
         log.warn("Tentativa de recuperar objetos inválidos: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "O objeto que você tentou recuperar não é válido. Verifique os dados e tente novamente"));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNoResourceFound(NoResourceFoundException ex) {
+        log.warn("Tentativa de acessar um endereço inválido: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "O endereço que você tentou acessar é inválido. Confira se a URL está certa"));
     }
 }
