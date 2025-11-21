@@ -1,10 +1,13 @@
 package spring.gr.socioai.security.config;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import spring.gr.socioai.model.valueobjects.Email;
+import spring.gr.socioai.repository.AuthenticatedUserRepository;
 import spring.gr.socioai.repository.CategoriaRepository;
 import spring.gr.socioai.repository.LancamentoRepository;
 import spring.gr.socioai.repository.MetaRepository;
@@ -25,10 +28,17 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     @Autowired
     private CategoriaRepository categoriaRepo;
 
+    @Autowired
+    private AuthenticatedUserRepository authenticatedUserRepository;
+
     @Override
     public boolean hasPermission(Authentication auth, Serializable targetId, String targetType, Object permission) {
 
-        UUID userId = UUID.fromString(auth.getName());
+        String username = auth.getName();
+        UUID userId = authenticatedUserRepository
+                .findByUsername(new Email(username))
+                .orElseThrow(() -> new EntityNotFoundException("O user com id " + username + " não existe"))
+                .getId();
 
         Long id = Long.parseLong(targetId.toString());
 
