@@ -3,8 +3,13 @@ package spring.gr.socioai.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import spring.gr.socioai.controller.http.responses.MetaResponse;
 import spring.gr.socioai.model.MetaEntity;
+import spring.gr.socioai.model.valueobjects.Email;
 
+import javax.swing.text.html.Option;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -16,4 +21,6 @@ public interface MetaRepository extends JpaRepository<MetaEntity, Long> {
                     AND m.categoria.user.id = :userId
             """)
     boolean isOwner(Long id, UUID userId);
+
+    List<MetaEntity> getAllByCategoria_User_Username(Email categoriaUserUsername);
 }

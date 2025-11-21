@@ -1,5 +1,6 @@
 package spring.gr.socioai.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,8 @@ import spring.gr.socioai.controller.http.requests.MetaDTO;
 import spring.gr.socioai.controller.http.responses.MetaResponse;
 import spring.gr.socioai.model.LancamentoEntity;
 import spring.gr.socioai.model.MetaEntity;
+import spring.gr.socioai.model.valueobjects.Email;
+import spring.gr.socioai.repository.AuthenticatedUserRepository;
 import spring.gr.socioai.repository.CategoriaRepository;
 import spring.gr.socioai.repository.MetaRepository;
 
@@ -20,6 +23,7 @@ public class MetaService {
 
     private final MetaRepository repository;
     private final CategoriaRepository categoriaRepository;
+    private final AuthenticatedUserRepository authenticatedUserRepository;
 
     /**
      * Converte um MetasDTO em uma entidade Metas para persistência.
@@ -135,6 +139,25 @@ public class MetaService {
     @Transactional
     public void deleteAll(List<Long> ids) {
         repository.deleteAllById(ids);
+    }
+
+    /**
+     * Metodo responsável por buscar todas as metas de um usuário
+     *
+     * @param username o nome do usuário
+     * @return uma lista com todas as metas dele ou lança uma exception dizendo que o usuário não existe
+     */
+    @Transactional
+    public List<MetaResponse> getAllMetasByUsername(String username) {
+
+        if(!authenticatedUserRepository.existsByUsername(new Email(username))){
+            throw new EntityNotFoundException("Usuário com username " + username + " não encontrado");
+        }
+
+        return repository
+                .getAllByCategoria_User_Username(new Email(username))
+                .stream().map(this::toResponse)
+                .toList();
     }
 
     private MetaResponse toResponse(MetaEntity metaEntity) {

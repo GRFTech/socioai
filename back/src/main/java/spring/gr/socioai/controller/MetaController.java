@@ -10,7 +10,6 @@ import spring.gr.socioai.controller.http.responses.MetaResponse;
 import spring.gr.socioai.service.MetaService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/metas")
@@ -123,5 +122,16 @@ public class MetaController {
         }
         service.deleteAll(ids);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Endpoint para buscar todas as metas de um usuário
+     *
+     * @param username nome do usuário
+     * @return uma lista com todos os usuários ou lança exceção caso o usuário não exista
+     */
+    @GetMapping("/u/{username}")
+    public ResponseEntity<List<MetaResponse>> getAllByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(service.getAllMetasByUsername(username));
     }
 }
