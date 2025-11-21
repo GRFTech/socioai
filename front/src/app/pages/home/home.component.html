@@ -1,0 +1,45 @@
+<main class="home-container">
+  <header class="home-header">
+    <h1>Bem-vindo, {{ username }}!</h1>
+    <button class="btn-logout" (click)="logout()">Sair</button>
+  </header>
+
+  <section class="menu-cards">
+    <!-- Cards antigos -->
+    <div class="card" routerLink="/user">
+      <span class="emoji">👤</span>
+      <h3>Perfil</h3>
+      <p>Visualize e edite seus dados.</p>
+    </div>
+
+    <div class="card" routerLink="/settings">
+      <span class="emoji">⚙️</span>
+      <h3>Configurações</h3>
+      <p>Ajuste suas preferências e segurança.</p>
+    </div>
+
+    <div class="card" routerLink="/reports">
+      <span class="emoji">📊</span>
+      <h3>Relatórios</h3>
+      <p>Acompanhe seu desempenho e estatísticas.</p>
+    </div>
+
+    <div class="card" routerLink="/categoria">
+  <span class="emoji">🗂️</span>
+  <h3>CRUD Categoria</h3>
+  <p>Gerencie suas categorias de forma fácil.</p>
+</div>
+
+    <div class="card" routerLink="/lancamentos">
+      <span class="emoji">💰</span>
+      <h3>CRUD Lançamentos</h3>
+      <p>Adicione, edite ou remova lançamentos.</p>
+    </div>
+
+    <div class="card" routerLink="/metas">
+      <span class="emoji">🎯</span>
+      <h3>CRUD Metas</h3>
+      <p>Defina e acompanhe suas metas financeiras.</p>
+    </div>
+  </section>
+</main>

@@ -1,0 +1,24 @@
+<main class="crud-container">
+  <header>
+    <h1>Categoria</h1>
+    <button class="btn-create">➕ Criar Categoria</button>
+  </header>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let categoria of categorias">
+        <td>{{ categoria.nome }}</td>
+        <td class="actions">
+          <button class="btn-edit">✏️</button>
+          <button class="btn-delete">🗑️</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</main>
