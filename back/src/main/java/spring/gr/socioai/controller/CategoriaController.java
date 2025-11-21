@@ -97,7 +97,7 @@ public class CategoriaController {
      * @return ResponseEntity com a lista de categorias e um status 200
      * ou um ResponseEntity com uma lista vazia e um status 200
      */
-    @GetMapping("/username/{username}")
+    @GetMapping("/u/{username}")
     public ResponseEntity<List<CategoriaResponse>> getAllCategoriasByUsername(@PathVariable String username) {
         return ResponseEntity.ok(this.service.getAllCategoriasByUsername(username));
     }
