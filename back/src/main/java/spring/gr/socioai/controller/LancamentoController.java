@@ -119,4 +119,15 @@ public class LancamentoController {
         service.deleteAll(ids);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Endpoint responsável por pegar todos os lançamentos de um usuário
+     *
+     * @param username nome do usuário
+     * @return retorna uma lista de lançamentos ou lança uma exceção dizendo que o usuário não existe
+     */
+    @GetMapping("/u/{username}")
+    public ResponseEntity<List<LancamentoResponse>> getAllLancamentosByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(service.getAllLancamentosByUsername(username));
+    }
 }

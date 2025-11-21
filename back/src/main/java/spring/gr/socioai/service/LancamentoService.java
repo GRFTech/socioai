@@ -1,12 +1,15 @@
 package spring.gr.socioai.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import spring.gr.socioai.controller.http.requests.LancamentoDTO;
 import spring.gr.socioai.controller.http.responses.LancamentoResponse;
 import spring.gr.socioai.model.LancamentoEntity;
+import spring.gr.socioai.model.valueobjects.Email;
 import spring.gr.socioai.model.valueobjects.TipoLancamento;
+import spring.gr.socioai.repository.AuthenticatedUserRepository;
 import spring.gr.socioai.repository.LancamentoRepository;
 import spring.gr.socioai.repository.MetaRepository;
 
@@ -20,6 +23,7 @@ public class LancamentoService {
     private final LancamentoRepository repository;
     private final MetaService metaService;
     private final MetaRepository metaRepository;
+    private final AuthenticatedUserRepository authenticatedUserRepository;
 
     /**
      * Converte um LancamentoDTO em uma entidade Lancamento para persistência.
@@ -161,6 +165,27 @@ public class LancamentoService {
     @Transactional
     public void deleteAll(List<Long> ids) {
         ids.forEach(this::delete);
+    }
+
+    /**
+     * Metodo responsável por pegar todos os lançamentos de um usuário
+     *
+     * @param username nome do usuário
+     * @return retorna uma lista de lançamentos ou lança uma exceção dizendo que o usuário não existe
+     */
+    @Transactional
+    public List<LancamentoResponse> getAllLancamentosByUsername(String username) {
+
+        var u = new Email(username);
+
+        if(!authenticatedUserRepository.existsByUsername(u)) {
+            throw new EntityNotFoundException("Usuário com username " + username + " não encontrado");
+        }
+
+        return repository.getAllByMeta_Categoria_User_Username(u)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     private LancamentoResponse toResponse(LancamentoEntity entity) {
