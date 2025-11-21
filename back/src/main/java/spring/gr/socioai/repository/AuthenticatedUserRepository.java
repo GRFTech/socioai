@@ -13,4 +13,6 @@ public interface AuthenticatedUserRepository extends JpaRepository<Authenticated
 
     Optional<AuthenticatedUserEntity> findByUsername(Email username);
     void deleteByUsername(Email username);
+
+    boolean existsByUsername(Email username);
 }
