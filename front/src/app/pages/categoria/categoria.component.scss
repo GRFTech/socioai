@@ -1,50 +1,115 @@
-/* categoria.component.scss */
-.crud-container {
-  padding: 2rem;
+/* Container principal */
+.categoria-container {
+  max-width: 700px;
+  margin: 2rem auto; /* centraliza horizontalmente e dá espaçamento vertical */
+  padding: 1rem;
+  background-color: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
 
-  header {
+/* Título */
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* Formulário de criação */
+.nova-categoria {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+
+  input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #2196F3;
+    color: white;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #1976D2;
+    }
+  }
+}
+
+/* Lista de categorias */
+.categoria-list {
+  list-style: none;
+  padding: 0;
+
+  li {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    justify-content: space-between;
+    background-color: #fff;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 
-    .create-wrapper {
+    .categoria-nome {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .categoria-user {
+      color: #777;
+      font-size: 0.9rem;
+      margin-left: 1rem;
+    }
+
+    .categoria-actions {
       display: flex;
       gap: 0.5rem;
 
-      input {
-        padding: 0.5rem;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-      }
-
       button {
-        background-color: #2ecc71;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        color: white;
+        padding: 0.5rem 0.7rem;
+        font-size: 1.3rem; /* ícones maiores */
         cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+
+        &:first-child {
+          background-color: #2196F3;
+          color: white;
+
+          &:hover {
+            background-color: #1976D2;
+          }
+        }
+
+        &:last-child {
+          background-color: #f44336;
+          color: white;
+
+          &:hover {
+            background-color: #d32f2f;
+          }
+        }
       }
     }
-  }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 0.75rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-
-    .actions button {
-      margin-right: 0.5rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.2rem;
+    input.edit-input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
     }
   }
 }

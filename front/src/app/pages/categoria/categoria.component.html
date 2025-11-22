@@ -1,24 +1,37 @@
-<main class="crud-container">
-  <header>
-    <h1>Categoria</h1>
-    <button class="btn-create">➕ Criar Categoria</button>
-  </header>
+<h1>Categorias</h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let categoria of categorias">
-        <td>{{ categoria.nome }}</td>
-        <td class="actions">
-          <button class="btn-edit">✏️</button>
-          <button class="btn-delete">🗑️</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</main>
+<!-- Formulário de criação sempre visível -->
+<div class="nova-categoria">
+  <input
+    type="text"
+    placeholder="Nome da categoria"
+    [(ngModel)]="novaCategoria.nome"
+  >
+  <button (click)="criar()">➕ Criar</button>
+</div>
+
+<hr>
+
+<h3>Lista de Categorias</h3>
+<ul class="categoria-list">
+  <li *ngFor="let c of categorias" class="categoria-item">
+
+    <!-- Modo edição -->
+    <ng-container *ngIf="editando?.id === c.id; else viewMode">
+      <input [(ngModel)]="editando!.nome" class="edit-input">
+      <button (click)="salvarEdicao()">💾</button>
+      <button (click)="cancelarEdicao()">❌</button>
+    </ng-container>
+
+    <!-- Modo view -->
+    <ng-template #viewMode>
+      <span class="categoria-nome">{{ c.nome }}</span>
+      <span class="categoria-user">{{ c.user }}</span>
+      <div class="categoria-actions">
+        <button (click)="editar(c)">✏️</button>
+        <button (click)="deletar(c.id)">❌</button>
+      </div>
+    </ng-template>
+
+  </li>
+</ul>

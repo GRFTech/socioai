@@ -5,15 +5,42 @@ import { HomeComponent } from './pages/home/home.component';
 import { UserComponent } from './pages/user/user.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { CategoriaComponent } from './pages/categoria/categoria.component';
+import { MetaComponent } from './pages/meta/meta.component'; // <-- ADICIONADO
+import { LancamentoComponent } from './pages/lancamento/lancamento.component';
 
 export const routes: Routes = [
     { path: "", component: LoginComponent },
     { path: "signup", component: SignUpComponent },
+
     { 
       path: "home", 
       component: HomeComponent, 
-      canActivate: [AuthGuardService] // protege a página principal 
+      canActivate: [AuthGuardService] 
     },
-    { path: "user", component: UserComponent, canActivate: [AuthGuardService] },
-    { path: 'categoria', component: CategoriaComponent, canActivate: [AuthGuardService] }, // ✅ nova rota
+
+    { 
+      path: "user", 
+      component: UserComponent, 
+      canActivate: [AuthGuardService] 
+    },
+
+    { 
+      path: "categoria", 
+      component: CategoriaComponent, 
+      canActivate: [AuthGuardService] 
+    },
+
+    // ✅ NOVA ROTA PARA METAS
+    { 
+      path: "metas", 
+      component: MetaComponent, 
+      canActivate: [AuthGuardService]
+    },
+    { 
+  path: "lancamentos", 
+  component: LancamentoComponent, 
+  canActivate: [AuthGuardService] 
+}
+
+    
 ];

@@ -1,69 +1,95 @@
-// categoria.component.ts
 import { Component, OnInit } from '@angular/core';
-import { CategoriaService, Categoria } from '../../services/categoria.service';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { CategoriaService, CategoriaDTO, CategoriaResponse } from '../../services/categoria.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-categoria',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './categoria.component.html',
   styleUrls: ['./categoria.component.scss']
 })
 export class CategoriaComponent implements OnInit {
-  categorias: Categoria[] = [];
-  form: FormGroup;
 
-  constructor(private categoriaService: CategoriaService, private toast: ToastrService) {
-    this.form = new FormGroup({
-      nome: new FormControl('', Validators.required)
+  categorias: CategoriaResponse[] = [];
+  novaCategoria = { nome: '' };     // <-- REMOVIDO username
+  editando: CategoriaResponse | null = null;
+  
+  constructor(
+    private categoriaService: CategoriaService,
+    private authService: AuthService
+  ) {}
+  
+  ngOnInit() {
+    this.load();
+  }
+
+  load() {
+  const username = this.authService.getUsername(); // pega o usuário logado
+  if (!username) {
+    console.error("Usuário não autenticado!");
+    return;
+  }
+
+  this.categoriaService.getByUsername(username).subscribe({
+    next: (data) => this.categorias = data,
+    error: (err) => console.error(err)
+  });
+}
+
+  criar() {
+    const username = this.authService.getUsername();
+    if (!username) {
+      console.error("Usuário não autenticado!");
+      return;
+    }
+
+    const dto: CategoriaDTO = {
+      nome: this.novaCategoria.nome,
+      username: username            // <-- AGORA CORRETO
+    };
+
+    this.categoriaService.create(dto).subscribe({
+      next: () => {
+        this.novaCategoria.nome = ""; // limpa só nome
+        this.load();
+      }
     });
   }
 
-  ngOnInit(): void {
-    this.loadCategorias();
+  editar(c: CategoriaResponse) {
+    this.editando = { ...c };
   }
 
-  loadCategorias() {
-    this.categoriaService.getAll().subscribe(data => this.categorias = data);
-  }
+  salvarEdicao() {
+    if (!this.editando) return;
 
-  createCategoria() {
-    if (this.form.invalid) return;
-    this.categoriaService.create(this.form.value).subscribe({
-      next: (c) => {
-        this.toast.success('Categoria criada com sucesso!');
-        this.categorias.push(c);
-        this.form.reset();
-      },
-      error: () => this.toast.error('Erro ao criar categoria!')
+    const username = this.authService.getUsername()!;
+    
+    const dto: CategoriaDTO = {
+      nome: this.editando.nome,
+      username: username            // <-- USAR JWT
+    };
+
+    this.categoriaService.update(this.editando.id, dto).subscribe({
+      next: () => {
+        this.editando = null;
+        this.load();
+      }
     });
   }
 
-  updateCategoria(c: Categoria) {
-    const nome = prompt('Editar nome da categoria:', c.nome);
-    if (nome) {
-      this.categoriaService.update(c.id!, { nome }).subscribe({
-        next: (updated) => {
-          this.toast.success('Categoria atualizada!');
-          c.nome = updated.nome;
-        },
-        error: () => this.toast.error('Erro ao atualizar categoria!')
-      });
-    }
+  cancelarEdicao() {
+    this.editando = null;
   }
 
-  deleteCategoria(c: Categoria) {
-    if (confirm(`Deseja realmente deletar "${c.nome}"?`)) {
-      this.categoriaService.delete(c.id!).subscribe({
-        next: () => {
-          this.toast.success('Categoria deletada!');
-          this.categorias = this.categorias.filter(cat => cat.id !== c.id);
-        },
-        error: () => this.toast.error('Erro ao deletar categoria!')
-      });
-    }
+  deletar(id: number) {
+    if (!confirm("Deseja realmente excluir?")) return;
+
+    this.categoriaService.delete(id).subscribe({
+      next: () => this.load()
+    });
   }
 }

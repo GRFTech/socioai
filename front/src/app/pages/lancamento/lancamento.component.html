@@ -1,0 +1,99 @@
+<div class="lancamento-container">
+
+  <h2>Lançamentos</h2>
+
+  <!-- FORM DE CRIAÇÃO -->
+  <div class="form-card">
+    <h3>Novo Lançamento</h3>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Descrição</label>
+        <input type="text" [(ngModel)]="novaLancamento.descricao" />
+      </div>
+
+      <div class="form-group">
+        <label>Valor</label>
+        <input type="number" step="0.01" [(ngModel)]="novaLancamento.valor" />
+      </div>
+
+      <div class="form-group">
+        <label>Meta</label>
+        <select [(ngModel)]="novaLancamento.meta">
+          <option [ngValue]="undefined">Selecione...</option>
+          <option *ngFor="let m of metas" [ngValue]="m.id">
+            {{ m.descricao }}
+          </option>
+        </select>
+      </div>
+
+    </div>
+
+    <button class="btn-primary" (click)="criar()">Adicionar Lançamento</button>
+  </div>
+
+  <!-- LISTAGEM -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Tipo</th>
+        <th>Meta</th>
+        <th>Data</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let l of lancamentos">
+
+        <!-- MODO DE EDIÇÃO -->
+        <ng-container *ngIf="editando as e; else view">
+          <ng-container *ngIf="e.id === l.id">
+
+            <td>
+              <input type="text" [(ngModel)]="e.descricao" />
+            </td>
+
+            <td>
+              <input type="number" step="0.01" [(ngModel)]="e.valor" />
+            </td>
+
+            <td>{{ e.valor < 0 ? 'DESPESA' : 'RECEITA' }}</td>
+
+            <td>{{ getMetaNome(e.meta) }}</td>
+
+            <td>{{ e.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</td>
+
+            <td>
+              <button class="btn-success" (click)="salvarEdicao()">Salvar</button>
+              <button class="btn-secondary" (click)="cancelarEdicao()">Cancelar</button>
+            </td>
+          </ng-container>
+        </ng-container>
+
+        <!-- MODO VISUALIZAÇÃO -->
+        <ng-template #view>
+          <td>{{ l.descricao }}</td>
+          <td [ngClass]="l.valor < 0 ? 'negativo' : 'positivo'">
+            {{ l.valor | currency:'BRL' }}
+          </td>
+          <td>{{ l.valor < 0 ? 'DESPESA' : 'RECEITA' }}</td>
+          <td>{{ getMetaNome(l.meta) }}</td>
+          <td>{{ l.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</td>
+
+          <td>
+            <button class="btn-warning" (click)="editar(l)">Editar</button>
+            <button class="btn-danger" (click)="deletar(l.id)">Excluir</button>
+          </td>
+        </ng-template>
+
+      </tr>
+
+    </tbody>
+  </table>
+
+</div>

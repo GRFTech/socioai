@@ -1,0 +1,60 @@
+<h1>Metas</h1>
+
+<!-- Formulário de criação -->
+<div class="nova-meta">
+  <input type="text" placeholder="Descrição" [(ngModel)]="novaMeta.descricao">
+  <input type="number" placeholder="Valor Atual" [(ngModel)]="novaMeta.valorAtual">
+  <input type="date" placeholder="Data Início" [(ngModel)]="novaMeta.dataInicio">
+  <input type="date" placeholder="Data Fim" [(ngModel)]="novaMeta.dataFim">
+
+  <select [(ngModel)]="novaMeta.categoria">
+    <option value="" disabled selected>Selecione uma categoria</option>
+    <option *ngFor="let c of categorias" [value]="c.id">{{ c.nome }}</option>
+  </select>
+
+  <button (click)="criar()">➕ Criar</button>
+</div>
+
+<hr>
+
+<h3>Lista de Metas</h3>
+
+<table class="metas-table">
+  <thead>
+    <tr>
+      <th>Descrição</th>
+      <th>Valor Atual</th>
+      <th>Data Início</th>
+      <th>Data Fim</th>
+      <th>Categoria</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let m of metas">
+      <ng-container *ngIf="editando?.id === m.id; else viewMode">
+        <td><input [(ngModel)]="editando!.descricao"></td>
+        <td><input type="number" [(ngModel)]="editando!.valorAtual"></td>
+        <td><input type="date" [(ngModel)]="editando!.dataInicio"></td>
+        <td><input type="date" [(ngModel)]="editando!.dataFim"></td>
+        <td><input type="text" [value]="getCategoriaNome(editando?.categoria)" disabled></td>
+        <td>
+          <button (click)="salvarEdicao()">💾</button>
+          <button (click)="cancelarEdicao()">❌</button>
+        </td>
+      </ng-container>
+
+      <ng-template #viewMode>
+        <td>{{ m.descricao }}</td>
+        <td>{{ m.valorAtual }}</td>
+        <td>{{ m.dataInicio | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ m.dataFim | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ getCategoriaNome(m.categoria) }}</td>
+        <td>
+          <button (click)="editar(m)">✏️</button>
+          <button (click)="deletar(m.id)">❌</button>
+        </td>
+      </ng-template>
+    </tr>
+  </tbody>
+</table>
