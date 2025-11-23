@@ -1,115 +1,75 @@
-/* Container principal */
-.categoria-container {
-  max-width: 700px;
-  margin: 2rem auto; /* centraliza horizontalmente e dá espaçamento vertical */
-  padding: 1rem;
-  background-color: #fafafa;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+/* --- ESTILOS PARA O MODAL (p-dialog) --- */
+
+/* 1. Ajusta o padding do CONTEÚDO principal */
+/* Aumentamos o padding superior aqui para criar mais espaço entre o título e o formulário. */
+:host ::ng-deep .p-dialog .p-dialog-content {
+  /* Topo, Direita, Fundo, Esquerda */
+  padding: 2rem 1.5rem 0 1.5rem; /* ALTERADO: Aumentado o padding superior (2rem) */
 }
 
-/* Título */
-h1 {
-  text-align: center;
+/* 2. Ajusta o espaçamento do RODAPÉ (onde ficam os botões) */
+:host ::ng-deep .p-dialog .p-dialog-footer {
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+}
+
+
+/* --- AUMENTO DO TAMANHO DOS BOTÕES NO RODAPÉ --- */
+:host ::ng-deep .p-dialog-footer .p-button {
+  /* Aumenta a distância entre os botões */
+  margin-left: 0.75rem;
+
+  /* ALTERAÇÃO AQUI: Aumentamos a fonte e o padding para aumentar o tamanho visual do botão */
+  font-size: 1.1rem !important; /* Aumenta o tamanho da fonte */
+  padding: 0.6rem 1.25rem !important; /* Aumenta o padding interno para que o botão cresça */
+}
+
+
+/* --- ESTILO GERAL DO FORMULÁRIO (mantido) --- */
+
+.p-fluid .p-field {
+  margin-top: 1rem;
   margin-bottom: 1.5rem;
+}
+
+.p-fluid .p-field label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
   color: #333;
+  font-size: 1rem;
 }
 
-/* Formulário de criação */
-.nova-categoria {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-
-  input {
-    flex: 1;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-
-  button {
-    padding: 0.5rem 1rem;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    background-color: #2196F3;
-    color: white;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background-color: #1976D2;
-    }
-  }
+.p-fluid .p-field input[type="text"] {
+  height: 40px;
+  font-size: 1.1rem;
 }
 
-/* Lista de categorias */
-.categoria-list {
-  list-style: none;
-  padding: 0;
 
-  li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #fff;
-    padding: 0.7rem 1rem;
-    border-radius: 6px;
-    margin-bottom: 0.8rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+/* --- ESTILOS DE CENTRALIZAÇÃO E BOTÃO CRIAR (mantidos) --- */
 
-    .categoria-nome {
-      font-weight: 500;
-      color: #333;
-    }
+.container-categorias-centralizado {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
 
-    .categoria-user {
-      color: #777;
-      font-size: 0.9rem;
-      margin-left: 1rem;
-    }
+/* Aumento do botão Criar */
+.nova-categoria .btn-criar-maior {
+  height: 44px;
+  line-height: 1;
+  padding: 0.7rem 1.25rem !important;
+  font-size: 1.1rem !important;
+}
 
-    .categoria-actions {
-      display: flex;
-      gap: 0.5rem;
+/* Ajuste de espaçamento dos botões na tabela */
+.p-mr-3 {
+  margin-right: 1rem !important;
+}
 
-      button {
-        padding: 0.5rem 0.7rem;
-        font-size: 1.3rem; /* ícones maiores */
-        cursor: pointer;
-        border: none;
-        border-radius: 4px;
-        transition: background-color 0.2s;
-
-        &:first-child {
-          background-color: #2196F3;
-          color: white;
-
-          &:hover {
-            background-color: #1976D2;
-          }
-        }
-
-        &:last-child {
-          background-color: #f44336;
-          color: white;
-
-          &:hover {
-            background-color: #d32f2f;
-          }
-        }
-      }
-    }
-
-    input.edit-input {
-      flex: 1;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-  }
+/* Seletor de fallback para o botão Criar */
+:host ::ng-deep .nova-categoria .btn-criar-maior {
+  height: 44px;
+  line-height: 1;
+  padding: 0.7rem 1.25rem !important;
+  font-size: 1.1rem !important;
 }

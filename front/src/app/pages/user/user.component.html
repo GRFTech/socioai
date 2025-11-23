@@ -1,1 +1,57 @@
-<p>Usuário autenticado</p>
+<h1>Gerenciamento de Usuários</h1>
+
+<p>
+  Esta página lista todos os usuários. Você pode visualizar e editar o papel (Role) e a senha de cada usuário.
+</p>
+
+<hr>
+
+<h3>Lista de Usuários</h3>
+
+<table class="users-table">
+  <thead>
+  <tr>
+    <th>ID (UUID)</th>
+    <th>Username (Email)</th>
+    <th>Papel (Role)</th>
+    <th>Nova Senha (Edição)</th>
+    <th>Ações</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let u of users">
+    <ng-container *ngIf="editando?.id === u.id; else viewMode">
+      <td><span class="user-id">{{ u.id }}</span></td>
+      <td><input [(ngModel)]="editando!.username" disabled class="input-disabled"></td>
+      <td>
+        <select [(ngModel)]="editando!.roleId" class="role-select">
+          <ng-container *ngIf="roles.length > 0; else noRoles">
+            <option *ngFor="let r of roles" [value]="r.id">{{ r.name }}</option>
+          </ng-container>
+          <ng-template #noRoles>
+            <option [value]="editando!.roleId" disabled selected>{{ getRoleName(editando!.roleId) }}</option>
+          </ng-template>
+        </select>
+      </td>
+      <td>
+        <input type="password" placeholder="Preencha p/ mudar a senha" [(ngModel)]="editando!.password">
+      </td>
+      <td>
+        <button (click)="salvarEdicao()" class="btn-action btn-save">💾 Salvar</button>
+        <button (click)="cancelarEdicao()" class="btn-action btn-cancel">❌ Cancelar</button>
+      </td>
+    </ng-container>
+
+    <ng-template #viewMode>
+      <td><span class="user-id">{{ u.id }}</span></td>
+      <td>{{ u.username }}</td>
+      <td>{{ getRoleName(u.roleId) }}</td>
+      <td> - </td>
+      <td>
+        <button (click)="editar(u)" class="btn-action btn-edit">✏️ Editar</button>
+        <button (click)="deletar(u.id)" class="btn-action btn-delete">🗑️ Deletar</button>
+      </td>
+    </ng-template>
+  </tr>
+  </tbody>
+</table>

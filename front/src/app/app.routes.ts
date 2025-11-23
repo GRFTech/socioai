@@ -12,35 +12,40 @@ export const routes: Routes = [
     { path: "", component: LoginComponent },
     { path: "signup", component: SignUpComponent },
 
-    { 
-      path: "home", 
-      component: HomeComponent, 
-      canActivate: [AuthGuardService] 
+    {
+      path: "home",
+      component: HomeComponent,
+      canActivate: [AuthGuardService]
     },
 
-    { 
-      path: "user", 
-      component: UserComponent, 
-      canActivate: [AuthGuardService] 
+    {
+      path: "user",
+      component: UserComponent,
+      canActivate: [AuthGuardService]
     },
 
-    { 
-      path: "categoria", 
-      component: CategoriaComponent, 
-      canActivate: [AuthGuardService] 
+    {
+      path: "categoria",
+      component: CategoriaComponent,
+      canActivate: [AuthGuardService]
     },
 
     // ✅ NOVA ROTA PARA METAS
-    { 
-      path: "metas", 
-      component: MetaComponent, 
+    {
+      path: "metas",
+      component: MetaComponent,
       canActivate: [AuthGuardService]
     },
-    { 
-  path: "lancamentos", 
-  component: LancamentoComponent, 
-  canActivate: [AuthGuardService] 
-}
+    {
+  path: "lancamentos",
+  component: LancamentoComponent,
+  canActivate: [AuthGuardService]
+},
+  {
+    path: "user",
+    component: UserComponent,
+    canActivate: [AuthGuardService]
+  },
 
-    
+
 ];

@@ -1,37 +1,101 @@
 <h1>Categorias</h1>
 
-<!-- Formulário de criação sempre visível -->
-<div class="nova-categoria">
-  <input
-    type="text"
-    placeholder="Nome da categoria"
-    [(ngModel)]="novaCategoria.nome"
-  >
-  <button (click)="criar()">➕ Criar</button>
-</div>
+<div class="container-categorias-centralizado">
 
-<hr>
+  <div class="nova-categoria">
+    <p-button
+      label="Criar Nova Categoria"
+      severity="success"
+      (click)="mostrarModal()"
+      styleClass="btn-criar-maior"
+    />
+  </div>
 
-<h3>Lista de Categorias</h3>
-<ul class="categoria-list">
-  <li *ngFor="let c of categorias" class="categoria-item">
+  <hr>
 
-    <!-- Modo edição -->
-    <ng-container *ngIf="editando?.id === c.id; else viewMode">
-      <input [(ngModel)]="editando!.nome" class="edit-input">
-      <button (click)="salvarEdicao()">💾</button>
-      <button (click)="cancelarEdicao()">❌</button>
-    </ng-container>
+  <h3>Lista de Categorias</h3>
 
-    <!-- Modo view -->
-    <ng-template #viewMode>
-      <span class="categoria-nome">{{ c.nome }}</span>
-      <span class="categoria-user">{{ c.user }}</span>
-      <div class="categoria-actions">
-        <button (click)="editar(c)">✏️</button>
-        <button (click)="deletar(c.id)">❌</button>
-      </div>
+  <p-table [value]="categorias" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nome</th>
+        <th>Usuário</th>
+        <th style="width: 10rem">Ações</th>
+      </tr>
     </ng-template>
 
-  </li>
-</ul>
+    <ng-template pTemplate="body" let-c>
+      <tr>
+        <td [pEditableColumn]="c.nome" pEditableColumnField="nome" [ngSwitch]="editando?.id === c.id">
+          <span *ngSwitchCase="false" class="categoria-nome">{{ c.nome }}</span>
+          <input *ngSwitchCase="true" pInputText type="text" [(ngModel)]="editando!.nome" class="edit-input">
+        </td>
+        <td>
+          <span class="categoria-user">{{ c.user }}</span>
+        </td>
+
+        <td class="categoria-actions">
+          <ng-container *ngIf="editando?.id === c.id; else viewActions">
+            <p-button icon="pi pi-save" (click)="salvarEdicao()" label="Salvar" severity="success" styleClass="p-mr-2" />
+            <p-button icon="pi pi-times" (click)="cancelarEdicao()" label="Cancelar" severity="secondary" />
+          </ng-container>
+
+          <ng-template #viewActions>
+            <p-button icon="pi pi-pencil" (click)="editar(c)" [rounded]="true" severity="secondary" styleClass="p-mr-3" />
+            <p-button
+              icon="pi pi-times"
+              [rounded]="true"
+              severity="danger"
+              (click)="deletar(c.id)"
+            />
+          </ng-template>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="3" style="text-align: center;">Nenhuma categoria encontrada.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog header="Criar Nova Categoria"
+            [(visible)]="displayModal"
+            [modal]="true"
+            [style]="{width: '50vw'}"
+            [draggable]="false"
+            [resizable]="false">
+
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="nomeCategoria">Nome da Categoria</label>
+        <input
+          id="nomeCategoria"
+          type="text"
+          pInputText
+          placeholder="Ex: Eletrônicos"
+          [(ngModel)]="novaCategoria.nome"
+        >
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancelar"
+        [raised]="true"
+        severity="secondary"
+        (click)="fecharModal()"
+        styleClass="p-button-text"
+      />
+      <p-button
+        label="Salvar"
+        icon="pi pi-check"
+        [raised]="true"
+        severity="success"
+        (click)="criarCategoriaEFechar()"
+      />
+    </ng-template>
+  </p-dialog>
+
+</div>
