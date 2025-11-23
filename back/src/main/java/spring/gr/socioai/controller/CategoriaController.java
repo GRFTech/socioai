@@ -134,6 +134,11 @@ public class CategoriaController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Endpoint responsável por retornar a soma dos valores de todas as metas dentro de cada categoria de um usuário
+     * @param username o nome do usuário
+     * @return uma lista com o nome e o total por categoria ou uma lista vazia caso o usuário não possua categorias ainda
+     */
     @GetMapping("/u/{username}/total")
     public ResponseEntity<List<TotalCategoriaResponse>> getTotalByUsername(@PathVariable String username) {
         return ResponseEntity.ok(service.valorTotalCategoriaByUsername(username));
