@@ -2,98 +2,164 @@
 
   <h2>Lançamentos</h2>
 
-  <!-- FORM DE CRIAÇÃO -->
+  <!-- MANTIVE SEU FORMULÁRIO DE CRIAÇÃO IGUAL -->
   <div class="form-card">
     <h3>Novo Lançamento</h3>
-
     <div class="form-grid">
-
       <div class="form-group">
         <label>Descrição</label>
-        <input type="text" [(ngModel)]="novaLancamento.descricao" />
+        <input type="text" [(ngModel)]="novaLancamento.descricao" class="p-inputtext" />
       </div>
-
       <div class="form-group">
         <label>Valor</label>
-        <input type="number" step="0.01" [(ngModel)]="novaLancamento.valor" />
+        <input type="number" step="0.01" [(ngModel)]="novaLancamento.valor" class="p-inputtext" />
       </div>
-
       <div class="form-group">
         <label>Meta</label>
-        <select [(ngModel)]="novaLancamento.meta">
+        <select [(ngModel)]="novaLancamento.meta" class="p-inputtext">
           <option [ngValue]="undefined">Selecione...</option>
           <option *ngFor="let m of metas" [ngValue]="m.id">
             {{ m.descricao }}
           </option>
         </select>
       </div>
-
     </div>
-
-    <button class="btn-primary" (click)="criar()">Adicionar Lançamento</button>
+    <button pButton label="Adicionar Lançamento" (click)="criar()"></button>
   </div>
 
-  <!-- LISTAGEM -->
-  <table class="table">
-    <thead>
-    <tr>
-      <th>Descrição</th>
-      <th>Valor</th>
-      <th>Tipo</th>
-      <th>Meta</th>
-      <th>Data</th>
-      <th>Ações</th>
-    </tr>
-    </thead>
+  <br><br>
 
-    <tbody>
+  <!-- TABELA PRIMENG ADAPTADA -->
+  <p-table
+    #dt1
+    [value]="lancamentos"
+    dataKey="id"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [loading]="loading"
+    [paginator]="true"
+    [globalFilterFields]="['descricao', 'valor']"
+    showGridlines>
 
-    <tr *ngFor="let l of lancamentos">
+    <!-- Cabeçalho (Filtro Global e Botão Limpar) -->
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <button pButton label="Limpar Filtros" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+        <span class="p-input-icon-left ml-auto">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" (input)="dt1.filterGlobal($any($event.target).value, 'contains')" placeholder="Buscar palavra-chave" />
+        </span>
+      </div>
+    </ng-template>
 
-      <!-- MODO DE EDIÇÃO -->
-      <ng-container *ngIf="editando as e; else view">
-        <ng-container *ngIf="e.id === l.id">
+    <!-- Cabeçalho das Colunas -->
+    <ng-template pTemplate="header">
+      <tr>
+        <!-- Coluna: Descrição -->
+        <th style="min-width:15rem">
+          <div class="flex align-items-center justify-content-between">
+            Descrição
+            <p-columnFilter type="text" field="descricao" display="menu" placeholder="Buscar por nome"></p-columnFilter>
+          </div>
+        </th>
 
-          <td>
-            <input type="text" [(ngModel)]="e.descricao" />
-          </td>
+        <!-- Coluna: Valor -->
+        <th style="min-width:10rem">
+          <div class="flex align-items-center justify-content-between">
+            Valor
+            <p-columnFilter type="numeric" field="valor" display="menu" currency="BRL"></p-columnFilter>
+          </div>
+        </th>
 
-          <td>
-            <input type="number" step="0.01" [(ngModel)]="e.valor" />
-          </td>
+        <!-- Coluna: Data -->
+        <th style="min-width:10rem">
+          <div class="flex align-items-center justify-content-between">
+            Data
+            <p-columnFilter type="date" field="dataCriacao" display="menu"></p-columnFilter>
+          </div>
+        </th>
 
-          <td>{{ e.valor < 0 ? 'DESPESA' : 'RECEITA' }}</td>
+        <!-- Coluna: Meta (Filtro Dropdown) -->
+        <th style="min-width:10rem">
+          <div class="flex align-items-center justify-content-between">
+            Meta
+            <!-- Filtro customizado para selecionar Metas -->
+            <p-columnFilter field="meta" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-dropdown
+                  [ngModel]="value"
+                  [options]="metas"
+                  (onChange)="filter($event.value)"
+                  optionLabel="descricao"
+                  optionValue="id"
+                  placeholder="Selecione uma Meta"
+                  [style]="{'min-width': '15rem'}">
+                </p-dropdown>
+              </ng-template>
+            </p-columnFilter>
+          </div>
+        </th>
 
-          <td>{{ getMetaNome(e.meta) }}</td>
+        <!-- Coluna: Tipo (Calculado via Tag) -->
+        <th style="min-width:8rem">
+          Tipo
+        </th>
 
-          <td>{{ e.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</td>
+        <!-- Coluna: Ações -->
+        <th style="width: 8rem; text-align: center;">Ações</th>
+      </tr>
+    </ng-template>
 
-          <td>
-            <button class="btn-success" (click)="salvarEdicao()">Salvar</button>
-            <button class="btn-secondary" (click)="cancelarEdicao()">Cancelar</button>
-          </td>
-        </ng-container>
-      </ng-container>
-
-      <!-- MODO VISUALIZAÇÃO -->
-      <ng-template #view>
-        <td>{{ l.descricao }}</td>
-        <td [ngClass]="l.valor < 0 ? 'negativo' : 'positivo'">
-          {{ l.valor | currency:'BRL' }}
-        </td>
-        <td>{{ l.valor < 0 ? 'DESPESA' : 'RECEITA' }}</td>
-        <td>{{ getMetaNome(l.meta) }}</td>
-        <td>{{ l.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</td>
-
+    <!-- Corpo da Tabela -->
+    <ng-template pTemplate="body" let-l>
+      <tr>
+        <!-- Descrição -->
         <td>
-          <button class="btn-warning" (click)="editar(l)">Editar</button>
-          <button class="btn-danger" (click)="deletar(l.id)">Excluir</button>
+          {{ l.descricao }}
         </td>
-      </ng-template>
 
-    </tr>
+        <!-- Valor -->
+        <td>
+          <span [ngClass]="l.valor < 0 ? 'text-red-500' : 'text-green-500'" style="font-weight: bold;">
+            {{ l.valor | currency:'BRL' }}
+          </span>
+        </td>
 
-    </tbody>
-  </table>
+        <!-- Data -->
+        <td>
+          {{ l.dataCriacao | date: 'dd/MM/yyyy' }}
+        </td>
+
+        <!-- Meta -->
+        <td>
+          {{ getMetaNome(l.meta) }}
+        </td>
+
+        <!-- Tipo (Tag) -->
+        <td>
+          <p-tag
+            [value]="l.valor < 0 ? 'DESPESA' : 'RECEITA'"
+            [severity]="getSeverity(l.valor)">
+          </p-tag>
+        </td>
+
+        <!-- Ações (Botões) -->
+        <td style="text-align: center;">
+          <div class="flex gap-2 justify-content-center">
+            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-warning p-button-text" (click)="editar(l)"></button>
+            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text" (click)="deletar(l.id)"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <!-- Mensagem Vazia -->
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6">Nenhum lançamento encontrado.</td>
+      </tr>
+    </ng-template>
+
+  </p-table>
 
 </div>
