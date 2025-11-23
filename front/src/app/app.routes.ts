@@ -7,6 +7,7 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { CategoriaComponent } from './pages/categoria/categoria.component';
 import { MetaComponent } from './pages/meta/meta.component'; // <-- ADICIONADO
 import { LancamentoComponent } from './pages/lancamento/lancamento.component';
+import { RelatorioComponent } from './pages/relatorio/relatorio.component';
 
 export const routes: Routes = [
     { path: "", component: LoginComponent },
@@ -46,6 +47,10 @@ export const routes: Routes = [
     component: UserComponent,
     canActivate: [AuthGuardService]
   },
-
+  {
+    path: "relatorio",
+    component: RelatorioComponent,
+    canActivate: [AuthGuardService]
+  }
 
 ];

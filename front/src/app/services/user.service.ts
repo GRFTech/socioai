@@ -20,8 +20,7 @@ export interface UserDTO {
 export interface UserResponse {
   id: string; // UUID no Java -> string no TS
   username: string;
-  roleId: number;
-  // Adicione quaisquer outros campos que a resposta contenha
+  role: number;
 }
 
 @Injectable({

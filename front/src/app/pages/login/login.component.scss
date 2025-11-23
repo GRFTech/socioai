@@ -13,4 +13,10 @@ form {
         color: $secondary-color;
         text-align: end;
     }
+  .error-message {
+    color: #ff4d4f; /* Um vermelho para erro */
+    font-size: 0.8rem;
+    margin-top: -10px; /* Ajusta o espaçamento */
+    margin-bottom: 10px;
+  }
 }

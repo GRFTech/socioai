@@ -29,7 +29,7 @@
             <option *ngFor="let r of roles" [value]="r.id">{{ r.name }}</option>
           </ng-container>
           <ng-template #noRoles>
-            <option [value]="editando!.roleId" disabled selected>{{ getRoleName(editando!.roleId) }}</option>
+            <option [value]="editando!.roleId" disabled selected>{{ getRoleName(editando!.role) }}</option>
           </ng-template>
         </select>
       </td>
@@ -45,7 +45,7 @@
     <ng-template #viewMode>
       <td><span class="user-id">{{ u.id }}</span></td>
       <td>{{ u.username }}</td>
-      <td>{{ getRoleName(u.roleId) }}</td>
+      <td>{{ getRoleName(u.role) }}</td>
       <td> - </td>
       <td>
         <button (click)="editar(u)" class="btn-action btn-edit">✏️ Editar</button>

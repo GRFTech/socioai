@@ -1,54 +1,64 @@
-<form [formGroup]="loginForm">
-  <app-primary-input
-    formControlName="email"
-    inputName="email"
-    type="email"
-    label="Email"
-    placeholder="johndoe@gmail.com"
+<app-default-login-layout
+  title="Login into your account"
+  primaryBtnText="Login Now"
+  secondaryBtnText="Signup Now"
+  (submit)="submit()"
+  (navigate)="navigate()"
+  [disablePrimaryBtn]="!loginForm.valid"
+>
+  <form [formGroup]="loginForm">
 
-    [ngClass]="{
-            'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched,
-            'is-valid': loginForm.get('email')?.valid && loginForm.get('email')?.touched
-        }"
-  >
-    <img src="/assets/svg/email-icon.svg"/>
-  </app-primary-input>
+    <!-- CAMPO EMAIL -->
+    <app-primary-input
+      formControlName="email"
+      inputName="email"
+      type="email"
+      label="Email"
+      placeholder="johndoe&#64;gmail.com"
+    >
+      <img src="/assets/svg/email-icon.svg"/>
+    </app-primary-input>
 
-  <div class="invalid-feedback d-block"
-       *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-
-    <div *ngIf="loginForm.get('email')?.errors?.['required']">
-      O e-mail é obrigatório.
+    <!-- MENSAGENS DE ERRO PARA O EMAIL (Uso da entidade HTML &#64; para evitar o erro NG5002) -->
+    <div
+      *ngIf="loginForm.controls['email'].invalid && loginForm.controls['email'].touched"
+      class="error-message"
+    >
+        <span *ngIf="loginForm.controls['email'].errors?.['required']">
+            O e-mail é obrigatório.
+        </span>
+      <span *ngIf="loginForm.controls['email'].errors?.['email']">
+            O formato do e-mail está incorreto. Por favor, inclua o símbolo 'arroba' ( &#64; ) e um domínio válido.
+        </span>
     </div>
-    <div *ngIf="loginForm.get('email')?.errors?.['email']">
-      O e-mail precisa ser um formato válido.
+    <!-- FIM MENSAGENS DE ERRO PARA O EMAIL -->
+
+    <!-- CAMPO SENHA -->
+    <app-primary-input
+      formControlName="password"
+      inputName="password"
+      type="password"
+      label="Your Password"
+    >
+      <img src="/assets/svg/password-icon.svg"/>
+    </app-primary-input>
+
+    <!-- MENSAGENS DE ERRO PARA A SENHA -->
+    <div
+      *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].touched"
+      class="error-message"
+    >
+        <span *ngIf="loginForm.controls['password'].errors?.['required']">
+            A senha é obrigatória.
+        </span>
+      <span *ngIf="loginForm.controls['password'].errors?.['minlength']">
+            A senha deve ter pelo menos 6 caracteres.
+        </span>
     </div>
-  </div>
+    <!-- FIM MENSAGENS DE ERRO PARA A SENHA -->
 
-  <app-primary-input
-    formControlName="password"
-    inputName="password"
-    type="password"
-    label="Your Password"
+    <span>Esqueceu a senha?</span>
 
-    [ngClass]="{
-            'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched,
-            'is-valid': loginForm.get('password')?.valid && loginForm.get('password')?.touched
-        }"
-  >
-    <img src="/assets/svg/password-icon.svg"/>
-  </app-primary-input>
+  </form>
 
-  <div class="invalid-feedback d-block"
-       *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-
-    <div *ngIf="loginForm.get('password')?.errors?.['required']">
-      A senha é obrigatória.
-    </div>
-    <div *ngIf="loginForm.get('password')?.errors?.['strongPassword']">
-      A senha deve ter 8+ caracteres, com letra maiúscula, minúscula e número.
-    </div>
-  </div>
-
-  <span>Esqueceu a senha?</span>
-</form>
+</app-default-login-layout>

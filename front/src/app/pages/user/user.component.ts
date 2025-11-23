@@ -58,13 +58,11 @@ export class UserComponent implements OnInit {
 
     const dto: Partial<UserDTO> = {
       username: username,
+      password: password,
       roleId: roleId,
     };
 
-    // Inclui a senha no DTO SOMENTE se foi alterada (password.length > 0)
-    if (password && password.length > 0) {
-      dto.password = password;
-    }
+
 
     this.userService.updateUser(username, dto).subscribe({
       next: () => {

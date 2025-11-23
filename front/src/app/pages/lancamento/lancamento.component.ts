@@ -82,24 +82,24 @@ export class LancamentoComponent implements OnInit {
     this.editando = { ...item };
   }
 
- salvarEdicao() {
-  if (!this.editando) return;
+  salvarEdicao() {
+    if (!this.editando) return;
 
-  const dto: Partial<LancamentoDTO> = {
-    descricao: this.editando.descricao,
-    valor: this.editando.valor,
-    dataCriacao: new Date(this.editando.dataCriacao),
-    meta: this.editando.meta
-  };
+    const dto: Partial<LancamentoDTO> = {
+      descricao: this.editando.descricao,
+      valor: this.editando.valor,
+      dataCriacao: new Date(this.editando.dataCriacao),
+      meta: this.editando.meta
+    };
 
-  this.lancamentoService.update(this.editando.id, dto).subscribe({
-    next: () => {
-      this.editando = null;
-      this.loadLancamentos();
-    },
-    error: err => console.error(err)
-  });
-}
+    this.lancamentoService.update(this.editando.id, dto).subscribe({
+      next: () => {
+        this.editando = null;
+        this.loadLancamentos();
+      },
+      error: err => console.error(err)
+    });
+  }
 
   cancelarEdicao() {
     this.editando = null;

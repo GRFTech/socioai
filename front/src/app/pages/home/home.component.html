@@ -1,53 +1,78 @@
-<main class="home-container">
-  <header class="home-header">
-    <h1>Bem-vindo, {{ username }}!</h1>
-    <button class="btn-logout" (click)="logout()">Sair</button>
-  </header>
+<main class="home-layout" [class.menu-open]="isMenuOpen">
 
-  <div class="card flex justify-center">
-    <p-chart type="radar" [data]="data" [options]="options" class="w-full md:w-[30rem]" />
-  </div>
-
-  <section class="menu-cards">
-    <div class="card" routerLink="/user">
-      <span class="emoji">👥</span> <h3>CRUD Usuários</h3>
-      <p>Gerencie todos os usuários da aplicação (Admin).</p>
+  <nav class="side-menu">
+    <div class="side-menu-header">
+      <button class="btn-close-menu" (click)="closeMenu()">X</button>
+      <h4>Navegação</h4>
     </div>
 
-    <div class="card" routerLink="/user-profile">
-      <span class="emoji">👤</span>
-      <h3>Meu Perfil</h3>
-      <p>Visualize e edite seus dados pessoais.</p>
-    </div>
+    <ul>
+      <li routerLink="/user" (click)="closeMenu()">👥 CRUD Usuários</li>
+      <li routerLink="/user-profile" (click)="closeMenu()">👤 Meu Perfil</li>
+      <li routerLink="/settings" (click)="closeMenu()">⚙️ Configurações</li>
+      <li routerLink="/reports" (click)="closeMenu()">📊 Relatórios</li>
+      <li routerLink="/categoria" (click)="closeMenu()">🗂️ CRUD Categoria</li>
+      <li routerLink="/lancamentos" (click)="closeMenu()">💰 CRUD Lançamentos</li>
+      <li routerLink="/metas" (click)="closeMenu()">🎯 CRUD Metas</li>
+    </ul>
+  </nav>
 
-    <div class="card" routerLink="/settings">
-      <span class="emoji">⚙️</span>
-      <h3>Configurações</h3>
-      <p>Ajuste suas preferências e segurança.</p>
-    </div>
+  <section class="content-wrapper">
 
-    <div class="card" routerLink="/reports">
-      <span class="emoji">📊</span>
-      <h3>Relatórios</h3>
-      <p>Acompanhe seu desempenho e estatísticas.</p>
-    </div>
+    <header class="home-header">
+      <div class="header-left">
+        <button class="btn-toggle-menu" (click)="toggleMenu()">☰</button>
+        <h1>Bem-vindo, {{ username }}!</h1>
+      </div>
+      <button class="btn-logout" (click)="logout()">Sair</button>
+    </header>
 
-    <div class="card" routerLink="/categoria">
-      <span class="emoji">🗂️</span>
-      <h3>CRUD Categoria</h3>
-      <p>Gerencie suas categorias de forma fácil.</p>
-    </div>
+    <section class="menu-cards">
 
-    <div class="card" routerLink="/lancamentos">
-      <span class="emoji">💰</span>
-      <h3>CRUD Lançamentos</h3>
-      <p>Adicione, edite ou remova lançamentos.</p>
-    </div>
+      <div class="card" routerLink="/user">
+        <span class="emoji">👥</span> <h3>CRUD Usuários</h3>
+        <p>Gerencie todos os usuários da aplicação (Admin).</p>
+      </div>
 
-    <div class="card" routerLink="/metas">
-      <span class="emoji">🎯</span>
-      <h3>CRUD Metas</h3>
-      <p>Defina e acompanhe suas metas financeiras.</p>
-    </div>
+      <div class="card" routerLink="/user-profile">
+        <span class="emoji">👤</span>
+        <h3>Meu Perfil</h3>
+        <p>Visualize e edite seus dados pessoais.</p>
+      </div>
+
+      <div class="card" routerLink="/settings">
+        <span class="emoji">⚙️</span>
+        <h3>Configurações</h3>
+        <p>Ajuste suas preferências e segurança.</p>
+      </div>
+
+      <div class="card" routerLink="/relatorio">
+        <span class="emoji">📊</span>
+        <h3>Relatórios</h3>
+        <p>Acompanhe seu desempenho e estatísticas.</p>
+      </div>
+
+      <div class="card" routerLink="/categoria">
+        <span class="emoji">🗂️</span>
+        <h3>CRUD Categoria</h3>
+        <p>Gerencie suas categorias de forma fácil.</p>
+      </div>
+
+      <div class="card" routerLink="/lancamentos">
+        <span class="emoji">💰</span>
+        <h3>CRUD Lançamentos</h3>
+        <p>Adicione, edite ou remova lançamentos.</p>
+      </div>
+
+      <div class="card" routerLink="/metas">
+        <span class="emoji">🎯</span>
+        <h3>CRUD Metas</h3>
+        <p>Defina e acompanhe suas metas financeiras.</p>
+      </div>
+
+    </section>
+
+    <p-chart type="bar" [data]="data" [options]="options"></p-chart>
+
   </section>
 </main>

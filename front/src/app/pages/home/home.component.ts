@@ -14,6 +14,9 @@ export class HomeComponent implements OnInit {
 
   username = localStorage.getItem("username") || "Usuário";
 
+  // O menu começa FECHADO
+  isMenuOpen: boolean = false;
+
   constructor(private router: Router) {}
 
   logout() {
@@ -22,62 +25,35 @@ export class HomeComponent implements OnInit {
     this.router.navigate([""]); // redireciona para login
   }
 
+  // Função que inverte o estado (abre/fecha o menu)
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  // Função para fechar o menu após a navegação
+  closeMenu() {
+    if (this.isMenuOpen) {
+      this.isMenuOpen = false;
+    }
+  }
+
   data: any;
 
   options: any;
 
   platformId = inject(PLATFORM_ID);
 
+  initChart() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.data = {
+        datasets: []
+      };
+      this.options = {};
+    }
+  }
+
   ngOnInit() {
     this.initChart();
   }
 
-  initChart() {
-    if (isPlatformBrowser(this.platformId)) {
-      const documentStyle = getComputedStyle(document.documentElement);
-      const textColor = documentStyle.getPropertyValue('--p-text-color');
-      const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-
-      this.data = {
-        labels: ['MONSTRUOSAMENTE', 'PRA K7', 'EXCELENTEMENTE', 'CAVEIRA', 'TOP FUNCIONALIDADES', 'COMANDOOOOOS', 'CRISTIANO RONAAAALDO'],
-        datasets: [
-          {
-            label: 'PRIME NG FUNCIONANDO',
-            borderColor: documentStyle.getPropertyValue('--p-gray-400'),
-            pointBackgroundColor: documentStyle.getPropertyValue('--p-gray-400'),
-            pointBorderColor: documentStyle.getPropertyValue('--p-gray-400'),
-            pointHoverBackgroundColor: textColor,
-            pointHoverBorderColor: documentStyle.getPropertyValue('--p-gray-400'),
-            data: [99, 99, 99, 99, 99, 99, 99]
-          },
-          {
-            label: 'DÚVIDAS SENHORES',
-            borderColor: documentStyle.getPropertyValue('--p-cyan-400'),
-            pointBackgroundColor: documentStyle.getPropertyValue('--p-cyan-400'),
-            pointBorderColor: documentStyle.getPropertyValue('--p-cyan-400'),
-            pointHoverBackgroundColor: textColor,
-            pointHoverBorderColor: documentStyle.getPropertyValue('--p-cyan-400'),
-            data: [0, 0, 0, 0, 0, 0, 0]
-          }
-        ]
-      };
-
-      this.options = {
-        plugins: {
-          legend: {
-            labels: {
-              color: textColor
-            }
-          }
-        },
-        scales: {
-          r: {
-            grid: {
-              color: textColorSecondary
-            }
-          }
-        }
-      };
-    }
-  }
 }
