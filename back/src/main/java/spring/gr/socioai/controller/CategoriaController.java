@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.gr.socioai.controller.http.requests.CategoriaDTO;
 import spring.gr.socioai.controller.http.responses.CategoriaResponse;
+import spring.gr.socioai.controller.http.responses.TotalCategoriaResponse;
 import spring.gr.socioai.service.CategoriaService;
 
 import java.util.List;
@@ -131,5 +132,10 @@ public class CategoriaController {
         }
         service.deleteAll(ids);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/u/{username}/total")
+    public ResponseEntity<List<TotalCategoriaResponse>> getTotalByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(service.valorTotalCategoriaByUsername(username));
     }
 }

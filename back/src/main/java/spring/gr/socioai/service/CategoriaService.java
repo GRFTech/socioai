@@ -3,10 +3,12 @@ package spring.gr.socioai.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.query.Meta;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import spring.gr.socioai.controller.http.requests.CategoriaDTO;
 import spring.gr.socioai.controller.http.responses.CategoriaResponse;
+import spring.gr.socioai.controller.http.responses.TotalCategoriaResponse;
 import spring.gr.socioai.model.CategoriaEntity;
 import spring.gr.socioai.model.MetaEntity;
 import spring.gr.socioai.model.valueobjects.Email;
@@ -14,6 +16,7 @@ import spring.gr.socioai.repository.AuthenticatedUserRepository;
 import spring.gr.socioai.repository.CategoriaRepository;
 import spring.gr.socioai.repository.MetaRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -171,6 +174,38 @@ public class CategoriaService {
 
         return list.stream().map(this::toResponse).toList();
     }
+
+    /**
+     * Calcula o valor total acumulado das metas para cada categoria associada a um usuário específico.
+     * <p>
+     * Este método recupera todas as categorias do usuário, itera sobre as metas configuradas
+     * em cada categoria e realiza o somatório dos valores atuais.
+     * </p>
+     *
+     * @param username O nome de usuário (geralmente o e-mail) utilizado para buscar as categorias.
+     * Deve corresponder ao usuário autenticado no contexto de segurança.
+     * @return Uma lista de {@link TotalCategoriaResponse} contendo o nome da categoria e a soma total
+     * dos valores das metas daquela categoria. Retorna uma lista vazia se o usuário não possuir categorias.
+     * @throws IllegalArgumentException se o formato do username (Email) for inválido ao instanciar o objeto Email.
+     * * @see TotalCategoriaResponse
+     * @see #repository
+     */
+    @Transactional
+    @PreAuthorize("#username == authentication.name")
+    public List<TotalCategoriaResponse> valorTotalCategoriaByUsername(String username) {
+        var allCategoriasByUsername = this.repository.getAllByUser_Username(new Email(username));
+
+        return allCategoriasByUsername.stream()
+                .map(categoria -> {
+                    Double soma = categoria.getMetas().stream()
+                            .mapToDouble(MetaEntity::getValorAtual)
+                            .sum();
+
+                    return new TotalCategoriaResponse(categoria.getNome(), soma);
+                })
+                .toList();
+    }
+
 
     public CategoriaEntity findByID(Long id) {
         return repository.getReferenceById(id);
