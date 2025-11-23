@@ -1,0 +1,70 @@
+<!--
+  Template atualizado para exibição do relatório de totais por categoria.
+  Layout profissional e modular inspirado em projetos CRUD, usando Tailwind para estética e espaçamento.
+-->
+<div class="relatorio-container p-4 md:p-8 bg-gray-50 min-h-screen">
+
+  <p-card styleClass="shadow-2xl rounded-xl border border-gray-200">
+
+    <!-- Título Principal -->
+    <h1 class="text-4xl font-extrabold mb-8 text-gray-800 border-b-2 border-primary-500 pb-2">
+      💰 Relatório Financeiro por Categoria
+    </h1>
+
+    <!-- 1. Indicador de Carregamento -->
+    <div *ngIf="loading" class="flex justify-content-center align-items-center h-48 bg-white rounded-lg shadow-inner">
+      <div class="pi pi-spin pi-spinner text-4xl text-blue-600"></div>
+      <p class="ml-4 text-gray-500 font-medium">Carregando dados do relatório...</p>
+    </div>
+
+    <!-- 2. MENSAGEM DE DADOS VAZIOS -->
+    <div *ngIf="!loading && totaisPorCategoria.length === 0" class="p-6 text-center text-gray-700 bg-blue-100 rounded-lg border border-blue-300 shadow-md">
+      <p class="font-semibold text-lg">Nenhum dado de relatório para exibir.</p>
+      <p class="mt-2 text-sm">Comece a registrar suas metas e lançamentos para visualizar o desempenho aqui!</p>
+    </div>
+
+    <!-- 3. CONTEÚDO PRINCIPAL (Tabela e Gráfico) -->
+    <div *ngIf="!loading && totaisPorCategoria.length > 0">
+
+      <!-- Layout Responsivo: 1 coluna no mobile, 2 colunas no desktop -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- 3A. TABELA PRIMEIRO: Dados Detalhados (Ocupa 100% no mobile, 50% no desktop) -->
+        <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700 border-b pb-2">Dados Detalhados</h2>
+
+          <p-table [value]="totaisPorCategoria" [tableStyle]="{ 'min-width': '100%' }" styleClass="p-datatable-striped p-datatable-gridlines p-datatable-sm rounded-lg overflow-hidden">
+
+            <ng-template pTemplate="header">
+              <tr class="bg-primary-50"> <!-- Fundo com cor do tema -->
+                <th class="p-3 font-bold text-left text-gray-800">Categoria</th>
+                <th class="p-3 font-bold text-right text-gray-800">Valor Total (R$)</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-total>
+              <tr>
+                <td class="p-3 font-medium">{{ total.categoria }}</td>
+                <td class="p-3 text-right font-semibold text-lg text-green-600">
+                  {{ total.valor | currency:'BRL':'symbol':'1.2-2' }}
+                </td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+        </div>
+
+        <!-- 3B. GRÁFICO DEPOIS: Visualização Gráfica (Ocupa 100% no mobile, 50% no desktop) -->
+        <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700 border-b pb-2">Visualização Gráfica</h2>
+          <!-- Gráfico agora ocupa a largura da coluna, mas com altura fixa e elegante -->
+          <div class="p-4 border border-gray-200 rounded-lg bg-gray-50 h-[25rem] flex items-center justify-center">
+            <p-chart type="bar" [data]="basicData" [options]="basicOptions" class="w-full h-full" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </p-card>
+</div>
