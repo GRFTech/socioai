@@ -2,13 +2,18 @@ package spring.gr.socioai.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.gr.socioai.controller.http.requests.LancamentoDTO;
 import spring.gr.socioai.controller.http.responses.LancamentoResponse;
+import spring.gr.socioai.controller.http.responses.PivotFinanceiroResponse;
 import spring.gr.socioai.service.LancamentoService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -130,4 +135,30 @@ public class LancamentoController {
     public ResponseEntity<List<LancamentoResponse>> getAllLancamentosByUsername(@PathVariable String username) {
         return ResponseEntity.ok(service.getAllLancamentosByUsername(username));
     }
+
+    @GetMapping("/fluxo-caixa/historico/{username}")
+    public ResponseEntity<List<PivotFinanceiroResponse>> getHistoricoCompleto(@PathVariable String username) {
+        var resultado = service.gerarPivotCompleto(username);
+        return ResponseEntity.ok(resultado);
+    }
+
+    @GetMapping("/fluxo-caixa/periodo/{username}")
+    public ResponseEntity<List<PivotFinanceiroResponse>> getPorPeriodo(
+            @PathVariable String username,
+            @RequestParam("inicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam("fim") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim) {
+
+        LocalDateTime dataInicio = inicio.atStartOfDay(); // 00:00:00
+        LocalDateTime dataFim = fim.atTime(LocalTime.MAX); // 23:59:59.999999
+
+        var resultado = service.gerarPivotPorPeriodo(username, dataInicio, dataFim);
+        return ResponseEntity.ok(resultado);
+    }
+
+    @GetMapping("/fluxo-caixa/global")
+    public ResponseEntity<List<PivotFinanceiroResponse>> getFluxoCaixaGlobal() {
+        var resultado = service.gerarPivotGlobal();
+        return ResponseEntity.ok(resultado);
+    }
+
 }

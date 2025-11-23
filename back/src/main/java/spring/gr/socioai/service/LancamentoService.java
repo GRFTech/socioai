@@ -7,15 +7,21 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import spring.gr.socioai.controller.http.requests.LancamentoDTO;
 import spring.gr.socioai.controller.http.responses.LancamentoResponse;
+import spring.gr.socioai.controller.http.responses.PivotFinanceiroResponse;
 import spring.gr.socioai.model.LancamentoEntity;
+import spring.gr.socioai.model.dto.ResumoLancamentoDTO;
 import spring.gr.socioai.model.valueobjects.Email;
 import spring.gr.socioai.model.valueobjects.TipoLancamento;
 import spring.gr.socioai.repository.AuthenticatedUserRepository;
 import spring.gr.socioai.repository.LancamentoRepository;
 import spring.gr.socioai.repository.MetaRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -195,6 +201,66 @@ public class LancamentoService {
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Transactional
+    @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
+    public List<PivotFinanceiroResponse> gerarPivotCompleto(String username) {
+        var dadosBrutos = repository.agruparLancamentosPorUsuario(new Email(username));
+        return transformarEmPivot(dadosBrutos);
+    }
+
+    @Transactional
+    @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
+    public List<PivotFinanceiroResponse> gerarPivotPorPeriodo(String username, LocalDateTime inicio, LocalDateTime fim) {
+        var dadosBrutos = repository.agruparLancamentosPorPeriodo(new Email(username), inicio, fim);
+        return transformarEmPivot(dadosBrutos);
+    }
+
+
+    private List<PivotFinanceiroResponse> transformarEmPivot(List<ResumoLancamentoDTO> dadosBrutos) {
+
+        Map<String, List<ResumoLancamentoDTO>> mapaPorMes = dadosBrutos.stream()
+                .collect(Collectors.groupingBy(d -> String.format("%d-%02d", d.ano(), d.mes())));
+
+        List<PivotFinanceiroResponse> relatorioFinal = new ArrayList<>();
+
+        for (var entry : mapaPorMes.entrySet()) {
+            String periodo = entry.getKey();
+            List<ResumoLancamentoDTO> itens = entry.getValue();
+
+            double receitas = itens.stream()
+                    .filter(i -> isReceita(i.tipo()))
+                    .mapToDouble(ResumoLancamentoDTO::total)
+                    .sum();
+
+            double despesas = itens.stream()
+                    .filter(i -> !isReceita(i.tipo()))
+                    .mapToDouble(ResumoLancamentoDTO::total)
+                    .sum();
+
+            relatorioFinal.add(new PivotFinanceiroResponse(
+                    periodo,
+                    receitas,
+                    despesas,
+                    receitas - despesas // Saldo
+            ));
+        }
+
+        relatorioFinal.sort((a, b) -> b.periodo().compareTo(a.periodo()));
+
+        return relatorioFinal;
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<PivotFinanceiroResponse> gerarPivotGlobal() {
+        var dadosBrutos = repository.agruparLancamentosGlobal();
+        return transformarEmPivot(dadosBrutos);
+    }
+
+    private boolean isReceita(TipoLancamento tipo) {
+        return tipo.name().equals("RECEITA") || tipo.name().equals("ENTRADA");
     }
 
     private LancamentoResponse toResponse(LancamentoEntity entity) {
