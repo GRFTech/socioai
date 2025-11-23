@@ -126,6 +126,6 @@ public class AuthenticatedUserService {
      * @return AuthenticatedUserEntityResponse
      */
     public AuthenticatedUserEntityResponse toResponse(AuthenticatedUserEntity user) {
-        return new AuthenticatedUserEntityResponse(user.getUsername(), user.getRole().getId());
+        return new AuthenticatedUserEntityResponse(user.getId(), user.getUsername(), user.getRole().getId());
     }
 }
