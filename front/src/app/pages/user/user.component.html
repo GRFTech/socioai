@@ -25,12 +25,9 @@
       <td><input [(ngModel)]="editando!.username" disabled class="input-disabled"></td>
       <td>
         <select [(ngModel)]="editando!.roleId" class="role-select">
-          <ng-container *ngIf="roles.length > 0; else noRoles">
-            <option *ngFor="let r of roles" [value]="r.id">{{ r.name }}</option>
-          </ng-container>
-          <ng-template #noRoles>
-            <option [value]="editando!.roleId" disabled selected>{{ getRoleName(editando!.role) }}</option>
-          </ng-template>
+          <option *ngFor="let r of roles" [value]="r.id">
+            {{ r.name }} (ID: {{ r.id }})
+          </option>
         </select>
       </td>
       <td>

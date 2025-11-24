@@ -31,7 +31,6 @@ export const routes: Routes = [
       canActivate: [AuthGuardService]
     },
 
-    // ✅ NOVA ROTA PARA METAS
     {
       path: "metas",
       component: MetaComponent,

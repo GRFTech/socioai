@@ -18,7 +18,7 @@ import { AuthService } from '../../services/auth.service';
     CommonModule,
     TableModule,
     CardModule,
-    ChartModule, // Deve ser importado para o p-chart funcionar
+    ChartModule,
     CurrencyPipe
   ],
   templateUrl: './relatorio.component.html',
@@ -61,7 +61,7 @@ export class RelatorioComponent implements OnInit {
       next: (data: TotalCategoriaResponse[]) => {
         this.totaisPorCategoria = data;
         this.loading = false;
-        this.updateChartData(data); // Chama a função para atualizar basicData
+        this.updateChartData(data);
       },
       error: (err) => {
         console.error('Erro ao carregar o relatório de totais:', err);
@@ -70,7 +70,7 @@ export class RelatorioComponent implements OnInit {
     });
   }
 
-  // Função para inicializar opções básicas do gráfico - ADAPTADA AO ESTILO DO PRIMENG DEMO
+
   initChartOptions() {
     const documentStyle = getComputedStyle(document.documentElement);
     // Usando variáveis CSS com o prefixo '--p-' conforme o demo
@@ -78,13 +78,13 @@ export class RelatorioComponent implements OnInit {
     const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color') || '#6c757d';
     const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color') || '#dee2e6';
 
-    this.basicOptions = { // RENOMEADO
+    this.basicOptions = {
       plugins: {
         legend: {
           labels: {
             color: textColor,
           },
-          display: false // Mantendo o display off para série única
+          display: false
         },
         title: {
           display: true,
@@ -121,24 +121,24 @@ export class RelatorioComponent implements OnInit {
     };
   }
 
-  // Função para transformar os dados do relatório no formato do Chart.js
+
   updateChartData(data: TotalCategoriaResponse[]) {
-    // Extrai os nomes das categorias para os rótulos do eixo X
+
     const labels = data.map(item => item.categoria);
-    // Extrai os valores para a série de dados do gráfico
+
     const values = data.map(item => item.valor);
 
     const documentStyle = getComputedStyle(document.documentElement);
-    // Cor primária do tema PrimeNG (usada para as barras)
+
     const primaryColor = documentStyle.getPropertyValue('--p-primary-color') || '#42A5F5';
 
-    this.basicData = { // RENOMEADO
-      labels: labels, // Nomes das categorias
+    this.basicData = {
+      labels: labels,
       datasets: [
         {
           label: 'Valor Total',
-          data: values, // Valores de cada barra
-          backgroundColor: primaryColor + '90', // Cor com transparência
+          data: values,
+          backgroundColor: primaryColor + '90',
           borderColor: primaryColor,
           borderWidth: 1,
           borderRadius: 4

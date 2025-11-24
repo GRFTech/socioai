@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { DefaultLoginLayoutComponent } from '../../components/default-login-layout/default-login-layout.component';
 import { FormControl, FormGroup, FormRecord, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
@@ -15,11 +16,12 @@ interface LoginForm {
   selector: 'app-login',
   standalone: true,
   imports: [
+    CommonModule,
     DefaultLoginLayoutComponent,
     ReactiveFormsModule,
     PrimaryInputComponent
   ],
-  
+
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -39,7 +41,7 @@ export class LoginComponent {
 
   submit(){
     const email = this.loginForm.value.email!;    // o ! diz: "não é null nem undefined"
-    const password = this.loginForm.value.password!;  
+    const password = this.loginForm.value.password!;
     console.log("Submit chegou aqui");
     this.loginService.login(email, password).subscribe({
       next: () => {

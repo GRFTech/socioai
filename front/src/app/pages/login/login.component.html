@@ -8,7 +8,7 @@
 >
   <form [formGroup]="loginForm">
 
-    <!-- CAMPO EMAIL -->
+
     <app-primary-input
       formControlName="email"
       inputName="email"
@@ -19,7 +19,7 @@
       <img src="/assets/svg/email-icon.svg"/>
     </app-primary-input>
 
-    <!-- MENSAGENS DE ERRO PARA O EMAIL (Uso da entidade HTML &#64; para evitar o erro NG5002) -->
+
     <div
       *ngIf="loginForm.controls['email'].invalid && loginForm.controls['email'].touched"
       class="error-message"
@@ -31,9 +31,9 @@
             O formato do e-mail está incorreto. Por favor, inclua o símbolo 'arroba' ( &#64; ) e um domínio válido.
         </span>
     </div>
-    <!-- FIM MENSAGENS DE ERRO PARA O EMAIL -->
 
-    <!-- CAMPO SENHA -->
+
+
     <app-primary-input
       formControlName="password"
       inputName="password"
@@ -43,7 +43,7 @@
       <img src="/assets/svg/password-icon.svg"/>
     </app-primary-input>
 
-    <!-- MENSAGENS DE ERRO PARA A SENHA -->
+
     <div
       *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].touched"
       class="error-message"
@@ -55,7 +55,7 @@
             A senha deve ter pelo menos 6 caracteres.
         </span>
     </div>
-    <!-- FIM MENSAGENS DE ERRO PARA A SENHA -->
+
 
     <span>Esqueceu a senha?</span>
 
