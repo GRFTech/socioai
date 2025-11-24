@@ -136,12 +136,24 @@ public class LancamentoController {
         return ResponseEntity.ok(service.getAllLancamentosByUsername(username));
     }
 
+    /**
+     * Endpoint responsável por gerar relatorios de pivot de um usuário ao longo de todo o
+     * seu período usando a aplicação
+     * @param username é o nome do usuário
+     * @return uma lista cheia de PivotFinanceiroResponse ou uma lista vazia
+     */
     @GetMapping("/fluxo-caixa/historico/{username}")
     public ResponseEntity<List<PivotFinanceiroResponse>> getHistoricoCompleto(@PathVariable String username) {
         var resultado = service.gerarPivotCompleto(username);
         return ResponseEntity.ok(resultado);
     }
 
+    /**
+     * Endpoint responsável por gerar relatorios de pivot de um usuário
+     * entre um período usando a aplicação. Ex? 09/08 até 21/08
+     * @param username é o nome do usuário
+     * @return uma lista cheia de PivotFinanceiroResponse ou uma lista vazia
+     */
     @GetMapping("/fluxo-caixa/periodo/{username}")
     public ResponseEntity<List<PivotFinanceiroResponse>> getPorPeriodo(
             @PathVariable String username,
@@ -155,6 +167,12 @@ public class LancamentoController {
         return ResponseEntity.ok(resultado);
     }
 
+    /**
+     * Endpoint responsável por gerar relatorios de pivot global, gerando
+     * dados sobre todos os lançamentos e enviando para um administrador
+     *
+     * @return uma lista cheia de PivotFinanceiroResponse ou uma lista vazia
+     */
     @GetMapping("/fluxo-caixa/global")
     public ResponseEntity<List<PivotFinanceiroResponse>> getFluxoCaixaGlobal() {
         var resultado = service.gerarPivotGlobal();
